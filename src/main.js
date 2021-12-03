@@ -7,8 +7,12 @@ import {createEventTemplate} from './view/event-view.js';
 import {createEditPointFormTemplate} from './view/edit-point-view.js';
 import {createNewPointTemplate} from './view/add-new-point-view.js';
 import {renderTemplate, RenderPosition} from './render.js';
+import {generatePoint} from './mock/point.js';
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 15;
+
+const points = Array.from({length: EVENT_COUNT}, generatePoint);
+console.log(points);
 
 const tripMain = document.querySelector('.trip-main');
 
@@ -32,7 +36,7 @@ const ListEvents = siteMain.querySelector('.trip-events__list');
 renderTemplate(ListEvents, createEditPointFormTemplate(), RenderPosition.AFTERBEGIN);
 
 for (let i = 0; i < EVENT_COUNT; i++) {
-  renderTemplate(ListEvents, createEventTemplate(), RenderPosition.BEFOREEND);
+  renderTemplate(ListEvents, createEventTemplate(points[i]), RenderPosition.BEFOREEND);
 }
 
 renderTemplate(ListEvents, createNewPointTemplate(), RenderPosition.BEFOREEND);
