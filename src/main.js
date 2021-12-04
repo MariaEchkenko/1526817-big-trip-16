@@ -8,10 +8,12 @@ import {createEditPointFormTemplate} from './view/edit-point-view.js';
 import {createNewPointTemplate} from './view/add-new-point-view.js';
 import {renderTemplate, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
+import {generateFilter} from './mock/filter.js';
 
 const EVENT_COUNT = 15;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint);
+const filters = generateFilter(points);
 
 const tripMain = document.querySelector('.trip-main');
 
@@ -22,7 +24,7 @@ const headerNavigation = headerControls.querySelector('.trip-controls__navigatio
 const headerFilters = headerControls.querySelector('.trip-controls__filters');
 
 renderTemplate(headerNavigation, createSiteMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(headerFilters, createFilterTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(headerFilters, createFilterTemplate(filters), RenderPosition.BEFOREEND);
 
 const siteMain = document.querySelector('.page-main');
 const mainEvents = siteMain.querySelector('.trip-events');
