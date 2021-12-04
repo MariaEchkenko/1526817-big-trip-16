@@ -12,7 +12,6 @@ import {generatePoint} from './mock/point.js';
 const EVENT_COUNT = 15;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint);
-console.log(points);
 
 const tripMain = document.querySelector('.trip-main');
 

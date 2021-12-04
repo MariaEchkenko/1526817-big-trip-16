@@ -1,14 +1,13 @@
-import dayjs from 'dayjs';
+import {TYPES} from '../const.js';
+import {humanizeTaskDate} from '../utils.js';
 
-const createEventTypeTemplate = (currentType) => {
-  const types = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
-
-  return types.map((type) =>
+const createEventTypeTemplate = (currentType) => (
+  TYPES.map((type) =>
     `<div class="event__type-item">
       <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${type.toLowerCase()} ${currentType === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
-    </div>`).join('');
-};
+    </div>`).join('')
+);
 
 const createOffersTemplate = (offers) => (
   offers.map(({title, price}) => (
@@ -42,8 +41,8 @@ export const createNewPointTemplate = (point = {}) => {
   } = point;
 
   const typeTemplate = createEventTypeTemplate();
-  const startTime = dayjs(dateFrom).format('DD/MM/YY HH:mm');
-  const endTime = dayjs(dateTo).format('DD/MM/YY HH:mm');
+  const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
+  const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(offer);
   const picturesTemplate = createPictureTemplate(pictures);
 

@@ -1,25 +1,22 @@
 import dayjs from 'dayjs';
+import {getRandomInteger} from '../utils.js';
+import {shuffle} from '../utils.js';
+import {TYPES, DESTINATIONS} from '../const.js';
 
-// Функция из интернета по генерации случайного числа из диапазона
-// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-//Функция для перемешивания массива
-const shuffle = (arr) => {
-  let j, temp;
-  for (let i = arr.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random()*(i + 1));
-    temp = arr[j];
-    arr[j] = arr[i];
-    arr[i] = temp;
-  }
-  return arr;
-};
+const DESCRIPTIONS = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+  'Cras aliquet varius magna, non porta ligula feugiat eget. ',
+  'Fusce tristique felis at fermentum pharetra. ',
+  'Aliquam id orci ut lectus varius viverra. ',
+  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. ',
+  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. ',
+  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. ',
+  'Sed sed nisi sed augue convallis suscipit in sed felis. ',
+  'Aliquam erat volutpat. ',
+  'Nunc fermentum tortor ac porta dapibus. ',
+  'In rutrum ac purus sit amet tempus. '
+];
+const SRC = 'http://picsum.photos/300/200?r=';
 
 const generateDate = () => {
   const maxMinutesGap = 30*24*60;
@@ -33,35 +30,17 @@ const generateDateTo = (dateFrom) => {
 };
 
 const generateType = () => {
-  const types = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
-
-  const randomIndex = getRandomInteger(0, types.length - 1);
-  return types[randomIndex];
+  const randomIndex = getRandomInteger(0, TYPES.length - 1);
+  return TYPES[randomIndex];
 };
 
 const generateDestination = () => {
-  const destinations = ['Amsterdam', 'Budapest', 'Geneva', 'Berlin', 'Madrid', 'Rome'];
-
-  const randomIndex = getRandomInteger(0, destinations.length - 1);
-  return destinations[randomIndex];
+  const randomIndex = getRandomInteger(0, DESTINATIONS.length - 1);
+  return DESTINATIONS[randomIndex];
 };
 
-const descriptions = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
-  'Cras aliquet varius magna, non porta ligula feugiat eget. ',
-  'Fusce tristique felis at fermentum pharetra. ',
-  'Aliquam id orci ut lectus varius viverra. ',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. ',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. ',
-  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. ',
-  'Sed sed nisi sed augue convallis suscipit in sed felis. ',
-  'Aliquam erat volutpat. ',
-  'Nunc fermentum tortor ac porta dapibus. ',
-  'In rutrum ac purus sit amet tempus. '
-];
-
 const generateDescription = () => {
-  const shuffleDescriptions = shuffle(descriptions);
+  const shuffleDescriptions = shuffle(DESCRIPTIONS);
 
   const randomIndex = getRandomInteger(1, 5);
   const description = shuffleDescriptions.slice(0, randomIndex).join('');
@@ -93,8 +72,8 @@ const generatePictires = () => {
   for (let i = 1; i <= RANDOM_PICTURE_COUNT; i++) {
     const randomIndex = getRandomInteger(0, 20);
     const picture = {
-      src:`http://picsum.photos/300/200?r=${randomIndex}`,
-      description:  descriptions[RANDOM_PICTURE_COUNT],
+      src:  SRC + randomIndex,
+      description:  DESCRIPTIONS[RANDOM_PICTURE_COUNT],
     };
     pictures.push(picture);
   }
