@@ -33,10 +33,10 @@ renderTemplate(mainEvents, createListPointsTemplate(), RenderPosition.BEFOREEND)
 
 const ListEvents = siteMain.querySelector('.trip-events__list');
 
-renderTemplate(ListEvents, createEditPointFormTemplate(), RenderPosition.AFTERBEGIN);
+renderTemplate(ListEvents, createEditPointFormTemplate(points[0]), RenderPosition.AFTERBEGIN);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
+for (let i = 2; i < EVENT_COUNT; i++) {
   renderTemplate(ListEvents, createEventTemplate(points[i]), RenderPosition.BEFOREEND);
 }
 
-renderTemplate(ListEvents, createNewPointTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(ListEvents, createNewPointTemplate(points[1]), RenderPosition.BEFOREEND);

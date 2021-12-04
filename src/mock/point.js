@@ -21,16 +21,6 @@ const shuffle = (arr) => {
   return arr;
 };
 
-const duration = 1440;
-const durationDay =  Math.floor(duration/1440);
-const durationMinutes = (duration % 60) > 0
-  ? duration % 60
-  : '00';
-const durationHours = (duration - durationMinutes)/60;
-const durationTime = `${durationDay}D ${durationHours}H ${durationMinutes}M`;
-console.log(durationTime);
-
-
 const generateDate = () => {
   const maxMinutesGap = 30*24*60;
   const daysGap = getRandomInteger(-maxMinutesGap, maxMinutesGap);
@@ -86,7 +76,7 @@ const generateOffer = () => {
   const RANDOM_OFFER_COUNT = getRandomInteger(0, 5);
   const offers = [];
   for (let i = 1; i <= RANDOM_OFFER_COUNT; i++) {
-    const randomIndex = getRandomInteger(0,  offerTitles.length - 1);
+    const randomIndex = getRandomInteger(0, offerTitles.length - 1);
     const offer = {
       id: i,
       title:  offerTitles[randomIndex],
@@ -95,6 +85,20 @@ const generateOffer = () => {
     offers.push(offer);
   }
   return offers;
+};
+
+const generatePictires = () => {
+  const RANDOM_PICTURE_COUNT = getRandomInteger(1, 5);
+  const pictures = [];
+  for (let i = 1; i <= RANDOM_PICTURE_COUNT; i++) {
+    const randomIndex = getRandomInteger(0, 20);
+    const picture = {
+      src:`http://picsum.photos/300/200?r=${randomIndex}`,
+      description:  descriptions[RANDOM_PICTURE_COUNT],
+    };
+    pictures.push(picture);
+  }
+  return pictures;
 };
 
 const randomOffers = {
@@ -119,12 +123,7 @@ export const generatePoint = () => {
     destination: generateDestination(),
     price: getRandomInteger(0, 1000),
     offer: randomOffers[type],
-    pictures: [
-      {
-        src: `http://picsum.photos/300/200?r=${getRandomInteger(0, 100)}`,
-        description: ''
-      }
-    ],
+    pictures: generatePictires(),
     description: generateDescription(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     dateFrom,

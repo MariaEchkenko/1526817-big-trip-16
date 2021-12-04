@@ -10,13 +10,17 @@ const createOfferTemplate = (offers) => (
   )).join('')
 );
 
-const formatConversionTime = (time) => {
-  const day = Math.floor(time/1440);
+const formatConversionTime = (time) => { //TODO допилить для случая, когда дни > 0, а минуты = 0
+  const day = Math.floor(time/1440) > 0
+    ? `${Math.floor(time/1440)}D`
+    : '';
   const minutes = (time % 60) > 0
     ? time % 60
     : '00';
-  const hours = (time - minutes)/60;
-  const formatTime = `${day}D ${hours}H ${minutes}M`;
+  const hours = (time - minutes)/60 > 0
+    ? `${(time - minutes)/60}H`
+    : '';
+  const formatTime = `${day} ${hours} ${minutes}M`;
   return formatTime;
 };
 
