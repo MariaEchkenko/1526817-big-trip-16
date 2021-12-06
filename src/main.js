@@ -5,10 +5,14 @@ import {createSortTemplate} from './view/sort-view.js';
 import {createListPointsTemplate} from './view/list-points-view.js';
 import {createEventTemplate} from './view/event-view.js';
 import {createEditPointFormTemplate} from './view/edit-point-view.js';
-import {createNewPointTemplate} from './view/add-new-point-view.js';
 import {renderTemplate, RenderPosition} from './render.js';
+import {generatePoint} from './mock/point.js';
+import {generateFilter} from './mock/filter.js';
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 15;
+
+const points = Array.from({length: EVENT_COUNT}, generatePoint);
+const filters = generateFilter(points);
 
 const tripMain = document.querySelector('.trip-main');
 
@@ -19,7 +23,7 @@ const headerNavigation = headerControls.querySelector('.trip-controls__navigatio
 const headerFilters = headerControls.querySelector('.trip-controls__filters');
 
 renderTemplate(headerNavigation, createSiteMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(headerFilters, createFilterTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(headerFilters, createFilterTemplate(filters), RenderPosition.BEFOREEND);
 
 const siteMain = document.querySelector('.page-main');
 const mainEvents = siteMain.querySelector('.trip-events');
@@ -29,10 +33,8 @@ renderTemplate(mainEvents, createListPointsTemplate(), RenderPosition.BEFOREEND)
 
 const ListEvents = siteMain.querySelector('.trip-events__list');
 
-renderTemplate(ListEvents, createEditPointFormTemplate(), RenderPosition.AFTERBEGIN);
+renderTemplate(ListEvents, createEditPointFormTemplate(points[0]), RenderPosition.AFTERBEGIN);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  renderTemplate(ListEvents, createEventTemplate(), RenderPosition.BEFOREEND);
+for (let i = 1; i < EVENT_COUNT; i++) {
+  renderTemplate(ListEvents, createEventTemplate(points[i]), RenderPosition.BEFOREEND);
 }
-
-renderTemplate(ListEvents, createNewPointTemplate(), RenderPosition.BEFOREEND);
