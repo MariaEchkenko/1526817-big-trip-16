@@ -66,6 +66,13 @@ const generateOffer = () => {
   return offers;
 };
 
+const randomOffersTemplate = [];
+for (let i = 0; i < TYPES.length; i++) {
+  randomOffersTemplate[i] = [TYPES[i], generateOffer()];
+}
+
+const randomOffers = Object.fromEntries(randomOffersTemplate);
+
 const generatePictires = () => {
   const RANDOM_PICTURE_COUNT = getRandomInteger(1, 5);
   const pictures = [];
@@ -80,17 +87,6 @@ const generatePictires = () => {
   return pictures;
 };
 
-const randomOffers = {
-  'Taxi': generateOffer(),
-  'Bus':  generateOffer(),
-  'Train':  generateOffer(),
-  'Ship':  generateOffer(),
-  'Drive':  generateOffer(),
-  'Flight':  generateOffer(),
-  'Check-in':  generateOffer(),
-  'Sightseeing':  generateOffer(),
-  'Restaurant':  generateOffer(),
-};
 
 export const generatePoint = () => {
   const type = generateType();

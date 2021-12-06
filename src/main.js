@@ -5,7 +5,6 @@ import {createSortTemplate} from './view/sort-view.js';
 import {createListPointsTemplate} from './view/list-points-view.js';
 import {createEventTemplate} from './view/event-view.js';
 import {createEditPointFormTemplate} from './view/edit-point-view.js';
-import {createNewPointTemplate} from './view/add-new-point-view.js';
 import {renderTemplate, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
@@ -36,8 +35,6 @@ const ListEvents = siteMain.querySelector('.trip-events__list');
 
 renderTemplate(ListEvents, createEditPointFormTemplate(points[0]), RenderPosition.AFTERBEGIN);
 
-for (let i = 2; i < EVENT_COUNT; i++) {
+for (let i = 1; i < EVENT_COUNT; i++) {
   renderTemplate(ListEvents, createEventTemplate(points[i]), RenderPosition.BEFOREEND);
 }
-
-renderTemplate(ListEvents, createNewPointTemplate(points[1]), RenderPosition.BEFOREEND);

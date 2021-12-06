@@ -1,12 +1,14 @@
-import {TYPES} from '../const.js';
+import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils.js';
 
 const createEventTypeTemplate = (currentType) => (
-  TYPES.map((type) =>
-    `<div class="event__type-item">
-      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${type.toLowerCase()} ${currentType === type ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
-    </div>`).join('')
+  TYPES.map((type) => {
+    const typeLowerCase = type.toLowerCase();
+    return `<div class="event__type-item">
+      <input id="event-type-${typeLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${typeLowerCase} ${currentType === type ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${typeLowerCase}" for="event-type-${typeLowerCase}-1">${type}</label>
+    </div>`;
+  }).join('')
 );
 
 const createOffersTemplate = (offers) => (
@@ -19,6 +21,12 @@ const createOffersTemplate = (offers) => (
         <span class="event__offer-price">${price}</span>
       </label>
     </div>`
+  )).join('')
+);
+
+const createDestinationsTemplate = () => (
+  DESTINATIONS.map((destination) => (
+    `<option value="${destination}"></option>`
   )).join('')
 );
 
@@ -38,6 +46,7 @@ export const createEditPointFormTemplate = (point = {}) => {
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(offer);
+  const destinationsTemplate = createDestinationsTemplate();
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -63,9 +72,7 @@ export const createEditPointFormTemplate = (point = {}) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${destinationsTemplate}
           </datalist>
         </div>
 
