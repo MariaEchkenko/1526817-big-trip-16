@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {humanizeTaskDate} from '../utils.js';
 import {formatConversionTime} from '../utils.js';
+import {createElement} from '../render.js';
 
 const createOfferTemplate = (offers) => (
   offers.map(({title, price}) => (
@@ -12,7 +13,7 @@ const createOfferTemplate = (offers) => (
   )).join('')
 );
 
-export const createEventTemplate = (point) => {
+const createEventTemplate = (point) => {
   const {type, destination, price, isFavorite, offer, dateFrom, dateTo} = point;
 
   const eventDate = humanizeTaskDate(dateFrom, 'D MMM');
@@ -61,3 +62,28 @@ export const createEventTemplate = (point) => {
     </div>
   </li>`;
 };
+
+export default class EventView {
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEventTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

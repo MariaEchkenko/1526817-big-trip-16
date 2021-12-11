@@ -1,5 +1,16 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils.js';
+import {createElement} from '../render.js';
+
+const BLANK_POINT = {
+  type: '',
+  destination: '',
+  price: null,
+  offer: [],
+  description: '',
+  dateFrom: null,
+  dateTo: null
+};
 
 const createEventTypeTemplate = (currentType) => (
   TYPES.map((type) => {
@@ -31,16 +42,8 @@ const createDestinationsTemplate = () => (
 );
 
 
-export const createEditPointFormTemplate = (point = {}) => {
-  const {
-    type = '',
-    destination = '',
-    price = null,
-    offer = [],
-    description = '',
-    dateFrom = null,
-    dateTo = null
-  } = point;
+const createEditPointFormTemplate = (point) => {
+  const {type, destination, price, offer, description, dateFrom, dateTo} = point;
 
   const typeTemplate = createEventTypeTemplate();
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
@@ -115,3 +118,28 @@ export const createEditPointFormTemplate = (point = {}) => {
     </form>
   </li>`;
 };
+
+export default class EditPointFormView {
+  #element = null;
+  #point = null;
+
+  constructor(point = BLANK_POINT) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEditPointFormTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

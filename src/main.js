@@ -3,9 +3,9 @@ import SiteMenuView from './view/site-menu-view.js';
 import FilterView from './view/filter-view.js';
 import SortView from './view/sort-view.js';
 import ListPointsView from './view/list-points-view.js';
-import {createEventTemplate} from './view/event-view.js';
-import {createEditPointFormTemplate} from './view/edit-point-view.js';
-import {renderTemplate, renderElement, RenderPosition} from './render.js';
+import EventView from './view/event-view.js';
+import EditPointFormView from './view/edit-point-view.js';
+import {renderElement, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 
@@ -28,13 +28,12 @@ renderElement(headerFilters,  new FilterView(filters).element, RenderPosition.BE
 const siteMain = document.querySelector('.page-main');
 const mainEvents = siteMain.querySelector('.trip-events');
 
+const listPointsComponent = new ListPointsView();
+
 renderElement(mainEvents, new SortView().element, RenderPosition.BEFOREEND);
-renderElement(mainEvents, new ListPointsView().element, RenderPosition.BEFOREEND);
-
-const ListEvents = siteMain.querySelector('.trip-events__list');
-
-renderTemplate(ListEvents, createEditPointFormTemplate(points[0]), RenderPosition.AFTERBEGIN);
+renderElement(mainEvents, listPointsComponent.element, RenderPosition.BEFOREEND);
+renderElement(listPointsComponent.element, new EditPointFormView(points[0]).element, RenderPosition.AFTERBEGIN);
 
 for (let i = 1; i < EVENT_COUNT; i++) {
-  renderTemplate(ListEvents, createEventTemplate(points[i]), RenderPosition.BEFOREEND);
+  renderElement(listPointsComponent.element, new EventView(points[i]).element, RenderPosition.BEFOREEND);
 }
