@@ -2,10 +2,10 @@ import {createTripInfoTemplate} from './view/trip-info-view.js';
 import {createSiteMenuTemplate} from './view/site-menu-view.js';
 import {createFilterTemplate} from './view/filter-view.js';
 import {createSortTemplate} from './view/sort-view.js';
-import {createListPointsTemplate} from './view/list-points-view.js';
+import ListPointsView from './view/list-points-view.js';
 import {createEventTemplate} from './view/event-view.js';
 import {createEditPointFormTemplate} from './view/edit-point-view.js';
-import {renderTemplate, RenderPosition} from './render.js';
+import {renderTemplate, renderElement, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 
@@ -29,7 +29,7 @@ const siteMain = document.querySelector('.page-main');
 const mainEvents = siteMain.querySelector('.trip-events');
 
 renderTemplate(mainEvents, createSortTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(mainEvents, createListPointsTemplate(), RenderPosition.BEFOREEND);
+renderElement(mainEvents, new ListPointsView().element, RenderPosition.BEFOREEND);
 
 const ListEvents = siteMain.querySelector('.trip-events__list');
 
