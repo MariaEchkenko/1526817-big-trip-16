@@ -1,9 +1,10 @@
 import {SORT_ITEMS} from '../const.js';
+import {createElement} from '../render.js';
 
 const isChecked = SORT_ITEMS[0];
 
-const createSortItemTemplate = (items) => (
-  items.map((item) => {
+const createSortItemTemplate = () => (
+  SORT_ITEMS.map((item) => {
     const checked = item === isChecked
       ? 'checked'
       : '';
@@ -14,9 +15,29 @@ const createSortItemTemplate = (items) => (
   }).join('')
 );
 
-export const createSortTemplate = () => {
-  const SortItemsTemplate = createSortItemTemplate(SORT_ITEMS);
+const createSortTemplate = () => {
+  const SortItemsTemplate = createSortItemTemplate();
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     ${SortItemsTemplate}
 </form>`;
 };
+
+export default class SortView {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createSortTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
