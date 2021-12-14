@@ -5,11 +5,12 @@ import SortView from './view/sort-view.js';
 import ListPointsView from './view/list-points-view.js';
 import EventView from './view/event-view.js';
 import EditPointFormView from './view/edit-point-view.js';
+import NoPointView from './view/no-point-view.js';
 import {render, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 
-const EVENT_COUNT = 15;
+const EVENT_COUNT = 0;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint);
 const filters = generateFilter(points);
@@ -70,8 +71,14 @@ const renderPoint = (listPointsElement, point) => {
 const listPointsComponent = new ListPointsView();
 
 render(mainEvents, new SortView().element, RenderPosition.BEFOREEND);
-render(mainEvents, listPointsComponent.element, RenderPosition.BEFOREEND);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  renderPoint(listPointsComponent.element, points[i]);
+if (points.length === 0) {
+  render(mainEvents, new NoPointView().element, RenderPosition.BEFOREEND);
+} else {
+  render(mainEvents, listPointsComponent.element, RenderPosition.BEFOREEND);
+
+  for (let i = 0; i < EVENT_COUNT; i++) {
+    renderPoint(listPointsComponent.element, points[i]);
+  }
 }
+
