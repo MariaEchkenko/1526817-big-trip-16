@@ -1,14 +1,18 @@
 import {createElement} from '../render.js';
 import {MESSAGES} from '../const.js';
 
-const activeFilter = 'everything';
 
-const createNoPointTemplate = () => (
+const createNoPointTemplate = (activeFilter) => (
   `<p class="trip-events__msg">${MESSAGES[activeFilter]}</p>`
 );
 
 export default class NoPointView {
   #element = null;
+  #activeFilter;
+
+  constructor(activeFilter) {
+    this.#activeFilter = activeFilter;
+  }
 
   get element() {
     if (!this.#element) {
@@ -19,7 +23,7 @@ export default class NoPointView {
   }
 
   get template() {
-    return createNoPointTemplate();
+    return createNoPointTemplate(this.#activeFilter);
   }
 
   removeElement() {

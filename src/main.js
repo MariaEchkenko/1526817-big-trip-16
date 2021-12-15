@@ -10,7 +10,7 @@ import {render, RenderPosition} from './render.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 
-const EVENT_COUNT = 0;
+const EVENT_COUNT = 20;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint);
 const filters = generateFilter(points);
@@ -73,7 +73,7 @@ const listPointsComponent = new ListPointsView();
 render(mainEvents, new SortView().element, RenderPosition.BEFOREEND);
 
 if (points.length === 0) {
-  render(mainEvents, new NoPointView().element, RenderPosition.BEFOREEND);
+  render(mainEvents, new NoPointView('everything').element, RenderPosition.BEFOREEND);
 } else {
   render(mainEvents, listPointsComponent.element, RenderPosition.BEFOREEND);
 
