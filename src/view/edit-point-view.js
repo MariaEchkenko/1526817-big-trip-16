@@ -1,5 +1,5 @@
 import {TYPES, DESTINATIONS} from '../const.js';
-import {humanizeTaskDate} from '../utils.js';
+import {humanizeTaskDate} from '../utils/point.js';
 import AbstractView from './abstract-view.js';
 
 const BLANK_POINT = {

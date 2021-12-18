@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import {humanizeTaskDate} from '../utils.js';
-import {formatConversionTime} from '../utils.js';
+import {humanizeTaskDate} from '../utils/point.js';
+import {formatConversionTime} from '../utils/point.js';
 import AbstractView from './abstract-view.js';
 
 const createOfferTemplate = (offers) => (
