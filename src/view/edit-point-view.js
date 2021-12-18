@@ -1,6 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const BLANK_POINT = {
   type: '',
@@ -119,27 +119,15 @@ const createEditPointFormTemplate = (point) => {
   </li>`;
 };
 
-export default class EditPointFormView {
-  #element = null;
+export default class EditPointFormView extends AbstractView {
   #point = null;
 
   constructor(point = BLANK_POINT) {
+    super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createEditPointFormTemplate(this.#point);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

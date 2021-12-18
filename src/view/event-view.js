@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {humanizeTaskDate} from '../utils.js';
 import {formatConversionTime} from '../utils.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createOfferTemplate = (offers) => (
   offers.map(({title, price}) => (
@@ -63,27 +63,15 @@ const createEventTemplate = (point) => {
   </li>`;
 };
 
-export default class EventView {
-  #element = null;
+export default class EventView extends AbstractView {
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createEventTemplate(this.#point);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

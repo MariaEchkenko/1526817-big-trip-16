@@ -1,5 +1,5 @@
 import {FILTERS} from '../const.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createFilterItemTemplate = (filters, isChecked) => (
   filters.map((filterName) => (
@@ -22,23 +22,15 @@ const createFilterTemplate = () => {
 </form>`;
 };
 
-export default class FilterView {
-  #element = null;
-  #filters = null
+export default class FilterView extends AbstractView {
+  #filters = null;
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  constructor(filters) {
+    super();
+    this.#filters = filters;
   }
 
   get template() {
     return createFilterTemplate(this.#filters);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
