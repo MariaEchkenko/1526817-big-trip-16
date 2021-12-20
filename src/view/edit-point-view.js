@@ -1,6 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
-import {humanizeTaskDate} from '../utils.js';
-import {createElement} from '../render.js';
+import {humanizeTaskDate} from '../utils/point.js';
+import AbstractView from './abstract-view.js';
 
 const BLANK_POINT = {
   type: '',
@@ -119,27 +119,35 @@ const createEditPointFormTemplate = (point) => {
   </li>`;
 };
 
-export default class EditPointFormView {
-  #element = null;
+export default class EditPointFormView extends AbstractView {
   #point = null;
 
   constructor(point = BLANK_POINT) {
+    super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createEditPointFormTemplate(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormCloseHandler = (callback) => {
+    this._callback.formClose = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+  }
+
+  #formCloseHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formClose();
   }
 }

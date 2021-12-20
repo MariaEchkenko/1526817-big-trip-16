@@ -1,5 +1,5 @@
 import {SORT_ITEMS} from '../const.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const isChecked = SORT_ITEMS[0];
 
@@ -22,22 +22,8 @@ const createSortTemplate = () => {
 </form>`;
 };
 
-export default class SortView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SortView extends AbstractView{
   get template() {
     return createSortTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
