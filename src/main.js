@@ -6,7 +6,7 @@ import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 
-const EVENT_COUNT = 0;
+const EVENT_COUNT = 20;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint);
 const filters = generateFilter(points);
