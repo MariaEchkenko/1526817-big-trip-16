@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 import {shuffle} from '../utils/common.js';
 import {TYPES, DESTINATIONS} from '../const.js';
@@ -94,6 +95,7 @@ export const generatePoint = () => {
   const dateTo = generateDateTo(dateFrom);
 
   return {
+    id: nanoid(),
     type,
     destination: generateDestination(),
     price: getRandomInteger(0, 1000),
