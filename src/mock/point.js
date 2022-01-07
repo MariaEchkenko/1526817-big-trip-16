@@ -60,7 +60,8 @@ const generateOffer = () => {
     const offer = {
       id: i,
       title:  offerTitles[randomIndex],
-      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE)
+      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+      isSelected: false,
     };
     offers.push(offer);
   }
