@@ -4,6 +4,8 @@ import NoPointView from '../view/no-point-view.js';
 import {updateItem} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 import PointPresenter from './point-presenter.js';
+import {SortType} from '../const.js';
+import {sortTime, sortPrice} from '../utils/point.js';
 
 const EVENT_COUNT = 20;
 
@@ -16,6 +18,8 @@ export default class TripPresenter {
 
   #listPoints = [];
   #pointPresenter = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedListPoints = [];
 
   constructor(listContainer) {
     this.#listContainer = listContainer;
@@ -23,6 +27,7 @@ export default class TripPresenter {
 
   init = (listPoints) => {
     this.#listPoints = [...listPoints];
+    this.#sourcedListPoints = [...listPoints];
 
     this.#renderTripsList();
   }
@@ -33,11 +38,38 @@ export default class TripPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#listPoints = updateItem(this.#listPoints, updatedPoint);
+    this.#sourcedListPoints = updateItem(this.#sourcedListPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  }
+
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#listPoints.sort(sortTime);
+        break;
+      case SortType.PRICE:
+        this.#listPoints.sort(sortPrice);
+        break;
+      default:
+        this.#listPoints = [...this.#sourcedListPoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearTripsList();
+    this.#renderTripsList();
   }
 
   #renderSort = () => {
     render(this.#listContainer, this.#sortComponent, RenderPosition.BEFOREEND);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderPoint = (point) => {

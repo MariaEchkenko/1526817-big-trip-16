@@ -8,7 +8,8 @@ import TripPresenter from './presenter/trip-presenter.js';
 
 const EVENT_COUNT = 20;
 
-const points = Array.from({length: EVENT_COUNT}, generatePoint);
+const points = Array.from({length: EVENT_COUNT}, generatePoint).sort((a, b) => a.dateFrom - b.dateFrom);
+
 const filters = generateFilter(points);
 
 const tripMain = document.querySelector('.trip-main');
