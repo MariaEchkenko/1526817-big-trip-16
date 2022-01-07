@@ -11,14 +11,14 @@ const EVENT_COUNT = 20;
 
 export default class TripPresenter {
   #listContainer = null;
+  #currentSortType = SortType.DEFAULT;
 
   #listPointsComponent = new ListPointsView();
-  #sortComponent = new SortView();
+  #sortComponent = new SortView(this.#currentSortType);
   #noPointComponent = new NoPointView('everything');
 
   #listPoints = [];
   #pointPresenter = new Map();
-  #currentSortType = SortType.DEFAULT;
   #sourcedListPoints = [];
 
   constructor(listContainer) {
@@ -44,16 +44,18 @@ export default class TripPresenter {
 
   #sortPoints = (sortType) => {
     switch (sortType) {
-      case SortType.TIME:
+      case SortType.TIME:{
         this.#listPoints.sort(sortTime);
         break;
-      case SortType.PRICE:
+      }
+      case SortType.PRICE:{
         this.#listPoints.sort(sortPrice);
         break;
-      default:
+      }
+      default:{
         this.#listPoints = [...this.#sourcedListPoints];
+      }
     }
-
     this.#currentSortType = sortType;
   }
 
