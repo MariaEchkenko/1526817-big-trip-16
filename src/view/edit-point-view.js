@@ -148,6 +148,6 @@ export default class EditPointFormView extends AbstractView {
 
   #formCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formClose();
+    this._callback.formClose(this.#point);
   }
 }
