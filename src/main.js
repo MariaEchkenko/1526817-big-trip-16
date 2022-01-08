@@ -2,13 +2,14 @@ import TripInfoView from './view/trip-info-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import FilterView from './view/filter-view.js';
 import {render, RenderPosition} from './utils/render.js';
+import {sortDefault} from './utils/point.js';
 import {generatePoint} from './mock/point.js';
 import {generateFilter} from './mock/filter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 
 const EVENT_COUNT = 20;
 
-const points = Array.from({length: EVENT_COUNT}, generatePoint).sort((a, b) => a.dateFrom - b.dateFrom);
+const points = Array.from({length: EVENT_COUNT}, generatePoint).sort(sortDefault);
 
 const filters = generateFilter(points);
 
