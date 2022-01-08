@@ -2,7 +2,7 @@ import ListPointsView from '../view/list-points-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import {updateItem} from '../utils/common.js';
-import {render, RenderPosition} from '../utils/render.js';
+import {remove, render, RenderPosition} from '../utils/render.js';
 import PointPresenter from './point-presenter.js';
 import {SortType} from '../const.js';
 import {sortTime, sortPrice} from '../utils/point.js';
@@ -11,10 +11,10 @@ const EVENT_COUNT = 20;
 
 export default class TripPresenter {
   #listContainer = null;
+  #sortComponent = null;
   #currentSortType = SortType.DEFAULT;
 
   #listPointsComponent = new ListPointsView();
-  #sortComponent = new SortView(this.#currentSortType);
   #noPointComponent = new NoPointView('everything');
 
   #listPoints = [];
@@ -65,13 +65,20 @@ export default class TripPresenter {
     }
 
     this.#sortPoints(sortType);
+    this.#clearSort();
+
     this.#clearTripsList();
     this.#renderTripsList();
   }
 
   #renderSort = () => {
+    this.#sortComponent = new SortView(this.#currentSortType);
     render(this.#listContainer, this.#sortComponent, RenderPosition.BEFOREEND);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  }
+
+  #clearSort = () => {
+    remove(this.#sortComponent);
   }
 
   #renderPoint = (point) => {
