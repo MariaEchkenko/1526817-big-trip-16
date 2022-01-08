@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 import {shuffle} from '../utils/common.js';
 import {TYPES, DESTINATIONS} from '../const.js';
@@ -59,7 +60,8 @@ const generateOffer = () => {
     const offer = {
       id: i,
       title:  offerTitles[randomIndex],
-      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE)
+      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+      isSelected: false,
     };
     offers.push(offer);
   }
@@ -94,6 +96,7 @@ export const generatePoint = () => {
   const dateTo = generateDateTo(dateFrom);
 
   return {
+    id: nanoid(),
     type,
     destination: generateDestination(),
     price: getRandomInteger(0, 1000),

@@ -22,14 +22,14 @@ const createEventTypeTemplate = (currentType) => (
   }).join('')
 );
 
-const createOffersTemplate = (offers) => (
-  offers.map(({title, price}) => (
+const createOffersTemplate = (offers, type) => (
+  offers.map((offer) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${title}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${offer.isSelected ? 'checked' : ''}>
+      <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
+        <span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`
   )).join('')
@@ -48,7 +48,7 @@ const createEditPointFormTemplate = (point) => {
   const typeTemplate = createEventTypeTemplate();
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
-  const offersTemplate = createOffersTemplate(offer);
+  const offersTemplate = createOffersTemplate(offer, type.toLowerCase());
   const destinationsTemplate = createDestinationsTemplate();
 
   return `<li class="trip-events__item">
@@ -57,7 +57,7 @@ const createEditPointFormTemplate = (point) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -138,7 +138,7 @@ export default class EditPointFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this.#point);
   }
 
   setFormCloseHandler = (callback) => {
@@ -148,6 +148,6 @@ export default class EditPointFormView extends AbstractView {
 
   #formCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formClose();
+    this._callback.formClose(this.#point);
   }
 }
