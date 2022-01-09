@@ -1,6 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
-import AbstractView from './abstract-view.js';
+import SmartView from './smart-view.js';
 
 const BLANK_POINT = {
   type: '',
@@ -119,16 +119,28 @@ const createEditPointFormTemplate = (point) => {
   </li>`;
 };
 
-export default class EditPointFormView extends AbstractView {
-  #point = null;
+export default class EditPointFormView extends SmartView {
 
   constructor(point = BLANK_POINT) {
     super();
-    this.#point = point;
+    this._data = EditPointFormView.parcePointToData(point);
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEditPointFormTemplate(this.#point);
+    return createEditPointFormTemplate(this._data);
+  }
+
+  reset = (point) => {
+    this.updateData(
+      EditPointFormView.parcePointToData(point)
+    );
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormCloseHandler(this._callback.formClose);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -136,9 +148,21 @@ export default class EditPointFormView extends AbstractView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__input--price')
+      .addEventListener('input', this.#priceInputHandler);
+  }
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value,
+    }, true);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(EditPointFormView.parceDataToPoint(this._data));
   }
 
   setFormCloseHandler = (callback) => {
@@ -148,6 +172,12 @@ export default class EditPointFormView extends AbstractView {
 
   #formCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formClose(this.#point);
+    this._callback.formClose(this._data); //проверить
+  }
+
+  static parcePointToData = (point) => ({...point});
+  static parceDataToPoint = (data) => {
+    const point = {...data};
+    return point;
   }
 }
