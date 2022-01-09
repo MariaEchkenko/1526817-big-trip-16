@@ -12,11 +12,11 @@ const BLANK_POINT = {
   dateTo: null
 };
 
-const createEventTypeTemplate = (currentType) => (
+const createEventTypeTemplate = () => (
   TYPES.map((type) => {
     const typeLowerCase = type.toLowerCase();
     return `<div class="event__type-item">
-      <input id="event-type-${typeLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${typeLowerCase} ${currentType === type ? 'checked' : ''}>
+      <input id="event-type-${typeLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${typeLowerCase}>
       <label class="event__type-label  event__type-label--${typeLowerCase}" for="event-type-${typeLowerCase}-1">${type}</label>
     </div>`;
   }).join('')
@@ -149,8 +149,9 @@ export default class EditPointFormView extends SmartView {
   }
 
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__input--price')
-      .addEventListener('input', this.#priceInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#typeInputHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
   }
 
   #priceInputHandler = (evt) => {
@@ -158,6 +159,20 @@ export default class EditPointFormView extends SmartView {
     this.updateData({
       price: evt.target.value,
     }, true);
+  }
+
+  #typeInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value,
+    });
+  }
+
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      destination: evt.target.value,
+    });
   }
 
   #formSubmitHandler = (evt) => {
