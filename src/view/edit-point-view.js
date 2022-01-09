@@ -172,7 +172,7 @@ export default class EditPointFormView extends SmartView {
 
   #formCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formClose(this._data); //проверить
+    this._callback.formClose();
   }
 
   static parcePointToData = (point) => ({...point});
