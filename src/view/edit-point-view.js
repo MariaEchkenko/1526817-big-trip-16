@@ -1,5 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
+import {randomOffers} from '../mock/point.js';
 import SmartView from './smart-view.js';
 
 const BLANK_POINT = {
@@ -163,8 +164,18 @@ export default class EditPointFormView extends SmartView {
 
   #typeInputHandler = (evt) => {
     evt.preventDefault();
+
+    const ucFirstType = (type) => {
+      if (!type) {
+        return type;
+      }
+      return type[0].toUpperCase() + type.slice(1);
+    };
+    const updateOffer = randomOffers[ucFirstType(evt.target.value)];
+
     this.updateData({
       type: evt.target.value,
+      offer: updateOffer
     });
   }
 

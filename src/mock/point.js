@@ -73,7 +73,7 @@ for (let i = 0; i < TYPES.length; i++) {
   randomOffersTemplate[i] = [TYPES[i], generateOffer()];
 }
 
-const randomOffers = Object.fromEntries(randomOffersTemplate);
+export const randomOffers = Object.fromEntries(randomOffersTemplate);
 
 const generatePictires = () => {
   const RANDOM_PICTURE_COUNT = getRandomInteger(1, 5);
