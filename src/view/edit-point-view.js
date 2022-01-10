@@ -36,10 +36,16 @@ const createOffersTemplate = (offers, type) => (
   )).join('')
 );
 
-const createDestinationsTemplate = () => (
-  DESTINATIONS.map((destination) => (
-    `<option value="${destination}"></option>`
-  )).join('')
+const createDestinationsTemplate = (type, destination) => (
+  `<div class="event__field-group  event__field-group--destination">
+    <label class="event__label  event__type-output" for="event-destination-1">
+      ${type}
+    </label>
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1">
+    <datalist id="destination-list-1">
+      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}"></option>`).join('')}
+    </datalist>
+  </div>`
 );
 
 
@@ -50,7 +56,7 @@ const createEditPointFormTemplate = (point) => {
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(offer, type.toLowerCase());
-  const destinationsTemplate = createDestinationsTemplate();
+  const destinationsTemplate = createDestinationsTemplate(type, destination);
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -70,15 +76,7 @@ const createEditPointFormTemplate = (point) => {
           </div>
         </div>
 
-        <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
-            ${type}
-          </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1">
-          <datalist id="destination-list-1">
-            ${destinationsTemplate}
-          </datalist>
-        </div>
+        ${destinationsTemplate}
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
