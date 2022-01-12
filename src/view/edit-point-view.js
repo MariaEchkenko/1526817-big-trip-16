@@ -2,6 +2,9 @@ import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
 import {randomOffers} from '../mock/point.js';
 import SmartView from './smart-view.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   type: '',
@@ -119,15 +122,32 @@ const createEditPointFormTemplate = (point) => {
 };
 
 export default class EditPointFormView extends SmartView {
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor(point = BLANK_POINT) {
     super();
     this._data = EditPointFormView.parcePointToData(point);
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
     return createEditPointFormTemplate(this._data);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
   }
 
   reset = (point) => {
@@ -138,6 +158,7 @@ export default class EditPointFormView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormCloseHandler(this._callback.formClose);
   }
@@ -145,6 +166,40 @@ export default class EditPointFormView extends SmartView {
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #setDatepicker = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        defaultDate: this._data.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+      },
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        defaultDate: this._data.dateTo,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
+
+  }
+
+  #dateFromChangeHandler = ([userDateFrom]) => {
+    this.updateData({
+      dateFrom: userDateFrom,
+    });
+  }
+
+  #dateToChangeHandler = ([userDateTo]) => {
+    this.updateData({
+      dateTo: userDateTo,
+    });
   }
 
   #setInnerHandlers = () => {
