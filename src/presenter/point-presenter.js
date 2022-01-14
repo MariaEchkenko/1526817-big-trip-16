@@ -1,6 +1,7 @@
 import EventView from '../view/event-view.js';
 import EditPointFormView from '../view/edit-point-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {AvailableOffers} from '../mock/offer.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -31,7 +32,7 @@ export  default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new EventView(point);
-    this.#pointEditComponent = new EditPointFormView(point);
+    this.#pointEditComponent = new EditPointFormView(point, AvailableOffers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);

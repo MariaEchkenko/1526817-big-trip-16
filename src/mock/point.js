@@ -79,10 +79,7 @@ export const generatePoint = () => {
   const description = destinationsData.filter(({name}) => name === destination);
   const dateFrom = generateDate();
   const dateTo = generateDateTo(dateFrom);
-  const offers = AvailableOffers[type];
-  offers.forEach((offer) => {
-    offer.isSelected = Boolean(getRandomInteger(0, 1));
-  });
+  const offers = AvailableOffers[type].slice(0, getRandomInteger(0, AvailableOffers[type].length));
 
   return {
     id: nanoid(),

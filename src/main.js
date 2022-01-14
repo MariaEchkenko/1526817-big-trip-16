@@ -10,7 +10,6 @@ import TripPresenter from './presenter/trip-presenter.js';
 const EVENT_COUNT = 20;
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint).sort(sortDefault);
-console.log(points);
 
 const filters = generateFilter(points);
 

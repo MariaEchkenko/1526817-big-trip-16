@@ -1,7 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
 import {destinationsData} from '../mock/point.js';
-import {AvailableOffers} from '../mock/offer.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 
@@ -27,10 +26,11 @@ const createEventTypeTemplate = () => (
   }).join('')
 );
 
-const createOffersTemplate = (offers, type) => (
-  offers.map((offer) => (
+const isOfferChecked = (offer, pointOffers) => (pointOffers.includes(offer));
+const createOffersTemplate = (availableOffers, pointOffers, type) => (
+  availableOffers.map((offer) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" data-id ="${offer.id}" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${offer.isSelected ? 'checked' : ''}>
+      <input class="event__offer-checkbox  visually-hidden" data-id ="${offer.id}" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${isOfferChecked(offer, pointOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -58,13 +58,13 @@ const createPictureTemplate = (pictures) => (
 );
 
 
-const createEditPointFormTemplate = (point) => {
+const createEditPointFormTemplate = (point, currentTypeOffers = []) => {
   const {type, destination, price, offers, description, dateFrom, dateTo} = point;
 
   const typeTemplate = createEventTypeTemplate();
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
-  const offersTemplate = createOffersTemplate(offers, type.toLowerCase());
+  const offersTemplate = createOffersTemplate(currentTypeOffers, offers, type.toLowerCase());
   const destinationsTemplate = createDestinationsTemplate(type, destination);
   const picturesTemplate = createPictureTemplate(description.pictures);
 
@@ -111,7 +111,7 @@ const createEditPointFormTemplate = (point) => {
         </button>
       </header>
       <section class="event__details">
-        ${offers.length ? `<section class="event__section  event__section--offers">
+        ${currentTypeOffers.length ? `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
@@ -139,17 +139,20 @@ const createEditPointFormTemplate = (point) => {
 export default class EditPointFormView extends SmartView {
   #datepickerFrom = null;
   #datepickerTo = null;
-  #checkedOffers = [];
+  #avialableOffers = null;
+  #currentTypeOffers = null;
 
-  constructor(point = BLANK_POINT) {
+  constructor(point = BLANK_POINT, avialableOffers) {
     super();
     this._data = EditPointFormView.parcePointToData(point);
+    this.#avialableOffers = avialableOffers;
+    this.#currentTypeOffers = this.#avialableOffers[this._data.type];
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
 
   get template() {
-    return createEditPointFormTemplate(this._data);
+    return createEditPointFormTemplate(this._data, this.#currentTypeOffers);
   }
 
   removeElement = () => {
@@ -241,11 +244,11 @@ export default class EditPointFormView extends SmartView {
       }
       return type[0].toUpperCase() + type.slice(1);
     };
-    const updateOffer = AvailableOffers[ucFirstType(evt.target.value)];
+    this.#currentTypeOffers = this.#avialableOffers[ucFirstType(evt.target.value)];
 
     this.updateData({
       type: evt.target.value,
-      offers: updateOffer
+      offers: []
     });
   }
 
@@ -259,28 +262,19 @@ export default class EditPointFormView extends SmartView {
     });
   }
 
+
   #offerInputHandler = (evt) => {
-    this.#checkedOffers = [...this._data.offers].map((offer) => {
-      if (offer.id === Number(evt.target.dataset.id)){
-        offer.isSelected = !offer.isSelected;
-      }
-      return offer;
-    });
+    let newCheckedOffers;
 
-    /*if (evt.target.checked) {
-      const checkedOffer = [...this._data.offers].filter((offer) => {
-        if (offer.id === Number(evt.target.dataset.id)) {
-          return offer;
-        }
-      });
-      this.#checkedOffers = this.#checkedOffers.concat(checkedOffer);
-
-      ??при апдейте в этом случае офферы перерисовываются сразу после выбора любого инпута и остается только один выбранный
-
-    }*/
+    if (this._data.offers.some((offer) => (offer.id === Number(evt.target.dataset.id)))) {
+      newCheckedOffers = [...this._data.offers].filter((offer) => (offer.id !== Number(evt.target.dataset.id)));
+    } else {
+      const checkedOffer = this.#currentTypeOffers.filter((offer) => (offer.id === Number(evt.target.dataset.id)));
+      newCheckedOffers = [...this._data.offers].concat(checkedOffer);
+    }
 
     this.updateData({
-      offers: this.#checkedOffers
+      offers: newCheckedOffers
     });
 
   }

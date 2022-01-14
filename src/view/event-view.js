@@ -5,12 +5,11 @@ import AbstractView from './abstract-view.js';
 
 const createOfferTemplate = (offers) => (
   offers.map((offer) => (
-    offer.isSelected ? `<li class="event__offer">
+    `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
     </li>`
-      : ''
   )).join('')
 );
 
