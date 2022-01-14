@@ -3,6 +3,7 @@ import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 import {shuffle} from '../utils/common.js';
 import {TYPES, DESTINATIONS} from '../const.js';
+import {AvailableOffers} from './offer.js';
 
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
@@ -48,33 +49,6 @@ const generateDescription = () => {
   return description;
 };
 
-const offerTitles = ['Upgrade to a business class', 'Choose the radio station', 'Order Uber', 'Add luggage', 'Switch to comfort', 'Rent a car', 'Add breakfast'];
-const MIN_OFFER_PRICE = 10;
-const MAX_OFFER_PRICE = 200;
-
-const generateOffer = () => {
-  const RANDOM_OFFER_COUNT = getRandomInteger(0, 5);
-  const offers = [];
-  for (let i = 1; i <= RANDOM_OFFER_COUNT; i++) {
-    const randomIndex = getRandomInteger(0, offerTitles.length - 1);
-    const offer = {
-      id: i,
-      title:  offerTitles[randomIndex],
-      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-      isSelected: false,
-    };
-    offers.push(offer);
-  }
-  return offers;
-};
-
-const randomOffersTemplate = [];
-for (let i = 0; i < TYPES.length; i++) {
-  randomOffersTemplate[i] = [TYPES[i], generateOffer()];
-}
-
-export const randomOffers = Object.fromEntries(randomOffersTemplate);
-
 const generatePictires = () => {
   const RANDOM_PICTURE_COUNT = getRandomInteger(1, 5);
   const pictures = [];
@@ -94,13 +68,17 @@ export const generatePoint = () => {
   const type = generateType();
   const dateFrom = generateDate();
   const dateTo = generateDateTo(dateFrom);
+  const offers = AvailableOffers[type];
+  offers.forEach((offer) => {
+    offer.isSelected = Boolean(getRandomInteger(0, 1));
+  });
 
   return {
     id: nanoid(),
     type,
     destination: generateDestination(),
     price: getRandomInteger(0, 1000),
-    offer: randomOffers[type],
+    offers,
     pictures: generatePictires(),
     description: generateDescription(),
     isFavorite: Boolean(getRandomInteger(0, 1)),

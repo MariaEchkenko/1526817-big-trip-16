@@ -1,6 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
-import {randomOffers} from '../mock/point.js';
+import {AvailableOffers} from '../mock/offer.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 
@@ -10,7 +10,7 @@ const BLANK_POINT = {
   type: '',
   destination: '',
   price: null,
-  offer: [],
+  offers: [],
   description: '',
   dateFrom: null,
   dateTo: null
@@ -29,7 +29,7 @@ const createEventTypeTemplate = () => (
 const createOffersTemplate = (offers, type) => (
   offers.map((offer) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${offer.isSelected ? 'checked' : ''}>
+      <input class="event__offer-checkbox  visually-hidden" data-id ="${offer.id}" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${offer.isSelected ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -44,21 +44,20 @@ const createDestinationsTemplate = (type, destination) => (
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1">
-    <datalist id="destination-list-1">
-      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}"></option>`).join('')}
-    </datalist>
+    <select class="event__input  event__input--destination" id="destination-list-1" name="event-destination">
+      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}" ${currentDestination === destination ? 'selected' : ''}></option>`).join('')}
+    </select>
   </div>`
 );
 
 
 const createEditPointFormTemplate = (point) => {
-  const {type, destination, price, offer, description, dateFrom, dateTo} = point;
+  const {type, destination, price, offers, description, dateFrom, dateTo} = point;
 
   const typeTemplate = createEventTypeTemplate();
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
-  const offersTemplate = createOffersTemplate(offer, type.toLowerCase());
+  const offersTemplate = createOffersTemplate(offers, type.toLowerCase());
   const destinationsTemplate = createDestinationsTemplate(type, destination);
 
   return `<li class="trip-events__item">
@@ -104,13 +103,13 @@ const createEditPointFormTemplate = (point) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        ${offers.length ? `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-          <div class="event__available-offers">
-            ${offersTemplate}
-          </div>
-        </section>
+        <div class="event__available-offers">
+          ${offersTemplate}
+        </div>
+      </section>` : ''}
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -124,6 +123,7 @@ const createEditPointFormTemplate = (point) => {
 export default class EditPointFormView extends SmartView {
   #datepickerFrom = null;
   #datepickerTo = null;
+  #checkedOffers = [];
 
   constructor(point = BLANK_POINT) {
     super();
@@ -206,6 +206,7 @@ export default class EditPointFormView extends SmartView {
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__type-list').addEventListener('change', this.#typeInputHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('click', this.#offerInputHandler));
   }
 
   #priceInputHandler = (evt) => {
@@ -224,11 +225,11 @@ export default class EditPointFormView extends SmartView {
       }
       return type[0].toUpperCase() + type.slice(1);
     };
-    const updateOffer = randomOffers[ucFirstType(evt.target.value)];
+    const updateOffer = AvailableOffers[ucFirstType(evt.target.value)];
 
     this.updateData({
       type: evt.target.value,
-      offer: updateOffer
+      offers: updateOffer
     });
   }
 
@@ -237,6 +238,32 @@ export default class EditPointFormView extends SmartView {
     this.updateData({
       destination: evt.target.value,
     });
+  }
+
+  #offerInputHandler = (evt) => {
+    this.#checkedOffers = [...this._data.offers].map((offer) => {
+      if (offer.id === Number(evt.target.dataset.id)){
+        offer.isSelected = !offer.isSelected;
+      }
+      return offer;
+    });
+
+    /*if (evt.target.checked) {
+      const checkedOffer = [...this._data.offers].filter((offer) => {
+        if (offer.id === Number(evt.target.dataset.id)) {
+          return offer;
+        }
+      });
+      this.#checkedOffers = this.#checkedOffers.concat(checkedOffer);
+
+      ??при апдейте в этом случае офферы перерисовываются сразу после выбора любого инпута и остается только один выбранный
+
+    }*/
+
+    this.updateData({
+      offers: this.#checkedOffers
+    });
+
   }
 
   #formSubmitHandler = (evt) => {
