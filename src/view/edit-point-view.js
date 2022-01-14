@@ -1,5 +1,6 @@
 import {TYPES, DESTINATIONS} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
+import {destinationsData} from '../mock/point.js';
 import {AvailableOffers} from '../mock/offer.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
@@ -45,9 +46,15 @@ const createDestinationsTemplate = (type, destination) => (
       ${type}
     </label>
     <select class="event__input  event__input--destination" id="destination-list-1" name="event-destination">
-      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}" ${currentDestination === destination ? 'selected' : ''}></option>`).join('')}
+      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}" ${currentDestination === destination ? 'selected' : ''}>${currentDestination}</option>`).join('')}
     </select>
   </div>`
+);
+
+const createPictureTemplate = (pictures) => (
+  pictures.map(({src, description}) => (
+    `<img class="event__photo" src=${src} alt="${description}">`
+  )).join('')
 );
 
 
@@ -59,6 +66,7 @@ const createEditPointFormTemplate = (point) => {
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(offers, type.toLowerCase());
   const destinationsTemplate = createDestinationsTemplate(type, destination);
+  const picturesTemplate = createPictureTemplate(description.pictures);
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -113,7 +121,15 @@ const createEditPointFormTemplate = (point) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
+          <p class="event__destination-description">${description.description}</p>
+
+          ${description.pictures.length ? `
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${picturesTemplate}
+            </div>
+          </div>`: ''}
+
         </section>
       </section>
     </form>
@@ -235,8 +251,11 @@ export default class EditPointFormView extends SmartView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
+    const currentDescription = destinationsData.filter(({name}) => name === evt.target.value);
+
     this.updateData({
       destination: evt.target.value,
+      description: currentDescription[0]
     });
   }
 

@@ -63,9 +63,20 @@ const generatePictires = () => {
   return pictures;
 };
 
+const createRandomDestinations = (city) => (
+  {
+    name: city,
+    description: generateDescription(),
+    pictures: generatePictires()
+  }
+);
+
+export const destinationsData = DESTINATIONS.map((city) => createRandomDestinations(city));
 
 export const generatePoint = () => {
   const type = generateType();
+  const destination = generateDestination();
+  const description = destinationsData.filter(({name}) => name === destination);
   const dateFrom = generateDate();
   const dateTo = generateDateTo(dateFrom);
   const offers = AvailableOffers[type];
@@ -76,11 +87,10 @@ export const generatePoint = () => {
   return {
     id: nanoid(),
     type,
-    destination: generateDestination(),
+    destination,
     price: getRandomInteger(0, 1000),
     offers,
-    pictures: generatePictires(),
-    description: generateDescription(),
+    description: description[0],
     isFavorite: Boolean(getRandomInteger(0, 1)),
     dateFrom,
     dateTo,
