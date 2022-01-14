@@ -20,14 +20,16 @@ const DESCRIPTIONS = [
 ];
 const SRC = 'http://picsum.photos/300/200?r=';
 
+const MAX_MINUTES_GAP = 43200; //30 дней в минутах 30*24*60
+const MAX_DIFF_MINUTES = 1440; // сутки в минутах 24*60
+
 const generateDate = () => {
-  const maxMinutesGap = 30*24*60;
-  const daysGap = getRandomInteger(-maxMinutesGap, maxMinutesGap);
+  const daysGap = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
   return dayjs().add(daysGap, 'minute').toDate();
 };
 
 const generateDateTo = (dateFrom) => {
-  const minutesGap = getRandomInteger(1, 24*60);
+  const minutesGap = getRandomInteger(1, MAX_DIFF_MINUTES);
   return dayjs(dateFrom).add(minutesGap, 'minute').toDate();
 };
 
