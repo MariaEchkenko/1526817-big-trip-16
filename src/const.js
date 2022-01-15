@@ -2,6 +2,13 @@ export const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-
 export const DESTINATIONS = ['Amsterdam', 'Budapest', 'Geneva', 'Berlin', 'Madrid', 'Rome'];
 export const FILTERS = ['everything', 'future', 'past'];
 export const MENU_ITEMS = ['Table', 'Stats'];
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
+
 export const SortType = {
   DEFAULT: 'Day',
   TIME: 'Time',

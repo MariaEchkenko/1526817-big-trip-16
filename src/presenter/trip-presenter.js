@@ -5,10 +5,12 @@ import {remove, render, RenderPosition} from '../utils/render.js';
 import PointPresenter from './point-presenter.js';
 import {SortType, UpdateType, UserAction} from '../const.js';
 import {sortTime, sortPrice} from '../utils/point.js';
+import {filter} from '../utils/filter.js';
 
 export default class TripPresenter {
   #listContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #sortComponent = null;
   #currentSortType = SortType.DEFAULT;
@@ -18,24 +20,30 @@ export default class TripPresenter {
 
   #pointPresenter = new Map();
 
-  constructor(listContainer, pointsModel) {
+  constructor(listContainer, pointsModel, filterModel) {
     this.#listContainer = listContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModeEvent);
+    this.#filterModel.addObserver(this.#handleModeEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.TIME:{
-        return [...this.#pointsModel.points].sort(sortTime);
+        return filteredPoints.sort(sortTime);
       }
       case SortType.PRICE:{
-        return [...this.#pointsModel.points].sort(sortPrice);
+        return filteredPoints.sort(sortPrice);
       }
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init = () => {
