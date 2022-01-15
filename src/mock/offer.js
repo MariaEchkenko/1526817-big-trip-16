@@ -26,4 +26,4 @@ for (let i = 0; i < TYPES.length; i++) {
   randomOffersTemplate[i] = [TYPES[i], generateOffer()];
 }
 
-export const AvailableOffers = Object.fromEntries(randomOffersTemplate);
+export const availableOffers = Object.fromEntries(randomOffersTemplate);
