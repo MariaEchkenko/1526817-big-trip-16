@@ -3,7 +3,7 @@ import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 import {shuffle} from '../utils/common.js';
 import {TYPES, DESTINATIONS} from '../const.js';
-import {AvailableOffers} from './offer.js';
+import {availableOffers} from './offer.js';
 
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
@@ -81,7 +81,7 @@ export const generatePoint = () => {
   const description = destinationsData.filter(({name}) => name === destination);
   const dateFrom = generateDate();
   const dateTo = generateDateTo(dateFrom);
-  const offers = AvailableOffers[type].slice(0, getRandomInteger(0, AvailableOffers[type].length));
+  const offers = availableOffers[type].slice(0, getRandomInteger(0, availableOffers[type].length));
 
   return {
     id: nanoid(),
