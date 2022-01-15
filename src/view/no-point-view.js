@@ -1,20 +1,27 @@
 import AbstractView from './abstract-view.js';
-import {MESSAGES} from '../const.js';
+import {FilterType} from '../const.js';
+
+const NoPointMessages = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PAST]: 'There are no past events now',
+};
 
 
-const createNoPointTemplate = (activeFilter) => (
-  `<p class="trip-events__msg">${MESSAGES[activeFilter]}</p>`
-);
+const createNoPointTemplate = (filterType) => {
+  const noPointMessagesValue = NoPointMessages[filterType];
+  return (
+    `<p class="trip-events__msg">${noPointMessagesValue}</p>`
+  );
+};
 
 export default class NoPointView extends AbstractView {
-  #activeFilter;
-
-  constructor(activeFilter) {
+  constructor(data) {
     super();
-    this.#activeFilter = activeFilter;
+    this._data = data;
   }
 
   get template() {
-    return createNoPointTemplate(this.#activeFilter);
+    return createNoPointTemplate(this._data);
   }
 }

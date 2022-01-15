@@ -3,7 +3,7 @@ import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import PointPresenter from './point-presenter.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {sortTime, sortPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
 
@@ -14,9 +14,10 @@ export default class TripPresenter {
 
   #sortComponent = null;
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.EVERYTHING;
 
   #listPointsComponent = new ListPointsView();
-  #noPointComponent = new NoPointView('everything');
+  #noPointComponent = null;
 
   #pointPresenter = new Map();
 
@@ -30,9 +31,9 @@ export default class TripPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:{
@@ -117,6 +118,7 @@ export default class TripPresenter {
   }
 
   #renderNoPoints = () => {
+    this.#noPointComponent = new NoPointView(this.#filterType);
     render(this.#listContainer, this.#noPointComponent, RenderPosition.BEFOREEND);
   }
 
