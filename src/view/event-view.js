@@ -4,17 +4,17 @@ import {formatConversionTime} from '../utils/point.js';
 import AbstractView from './abstract-view.js';
 
 const createOfferTemplate = (offers) => (
-  offers.map(({title, price}) => (
+  offers.map((offer) => (
     `<li class="event__offer">
-    <span class="event__offer-title">${title}</span>
+    <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
-    <span class="event__offer-price">${price}</span>
+    <span class="event__offer-price">${offer.price}</span>
     </li>`
   )).join('')
 );
 
 const createEventTemplate = (point) => {
-  const {type, destination, price, isFavorite, offer, dateFrom, dateTo} = point;
+  const {type, destination, price, isFavorite, offers, dateFrom, dateTo} = point;
 
   const eventDate = humanizeTaskDate(dateFrom, 'D MMM');
   const startTime = humanizeTaskDate(dateFrom, 'H:mm');
@@ -22,7 +22,7 @@ const createEventTemplate = (point) => {
   const diffTime = dayjs(dateTo).diff(dateFrom, 'minute');
   const duration = formatConversionTime(diffTime);
 
-  const offersTemplate = createOfferTemplate(offer);
+  const offersTemplate = createOfferTemplate(offers);
 
   const favoriteClassName = isFavorite
     ? 'event__favorite-btn--active'

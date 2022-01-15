@@ -3,6 +3,7 @@ import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 import {shuffle} from '../utils/common.js';
 import {TYPES, DESTINATIONS} from '../const.js';
+import {AvailableOffers} from './offer.js';
 
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
@@ -19,14 +20,16 @@ const DESCRIPTIONS = [
 ];
 const SRC = 'http://picsum.photos/300/200?r=';
 
+const MAX_MINUTES_GAP = 43200; //30 дней в минутах 30*24*60
+const MAX_DIFF_MINUTES = 1440; // сутки в минутах 24*60
+
 const generateDate = () => {
-  const maxMinutesGap = 30*24*60;
-  const daysGap = getRandomInteger(-maxMinutesGap, maxMinutesGap);
+  const daysGap = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
   return dayjs().add(daysGap, 'minute').toDate();
 };
 
 const generateDateTo = (dateFrom) => {
-  const minutesGap = getRandomInteger(1, 24*60);
+  const minutesGap = getRandomInteger(1, MAX_DIFF_MINUTES);
   return dayjs(dateFrom).add(minutesGap, 'minute').toDate();
 };
 
@@ -48,33 +51,6 @@ const generateDescription = () => {
   return description;
 };
 
-const offerTitles = ['Upgrade to a business class', 'Choose the radio station', 'Order Uber', 'Add luggage', 'Switch to comfort', 'Rent a car', 'Add breakfast'];
-const MIN_OFFER_PRICE = 10;
-const MAX_OFFER_PRICE = 200;
-
-const generateOffer = () => {
-  const RANDOM_OFFER_COUNT = getRandomInteger(0, 5);
-  const offers = [];
-  for (let i = 1; i <= RANDOM_OFFER_COUNT; i++) {
-    const randomIndex = getRandomInteger(0, offerTitles.length - 1);
-    const offer = {
-      id: i,
-      title:  offerTitles[randomIndex],
-      price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-      isSelected: false,
-    };
-    offers.push(offer);
-  }
-  return offers;
-};
-
-const randomOffersTemplate = [];
-for (let i = 0; i < TYPES.length; i++) {
-  randomOffersTemplate[i] = [TYPES[i], generateOffer()];
-}
-
-const randomOffers = Object.fromEntries(randomOffersTemplate);
-
 const generatePictires = () => {
   const RANDOM_PICTURE_COUNT = getRandomInteger(1, 5);
   const pictures = [];
@@ -89,20 +65,31 @@ const generatePictires = () => {
   return pictures;
 };
 
+const createRandomDestinations = (city) => (
+  {
+    name: city,
+    description: generateDescription(),
+    pictures: generatePictires()
+  }
+);
+
+export const destinationsData = DESTINATIONS.map((city) => createRandomDestinations(city));
 
 export const generatePoint = () => {
   const type = generateType();
+  const destination = generateDestination();
+  const description = destinationsData.filter(({name}) => name === destination);
   const dateFrom = generateDate();
   const dateTo = generateDateTo(dateFrom);
+  const offers = AvailableOffers[type].slice(0, getRandomInteger(0, AvailableOffers[type].length));
 
   return {
     id: nanoid(),
     type,
-    destination: generateDestination(),
+    destination,
     price: getRandomInteger(0, 1000),
-    offer: randomOffers[type],
-    pictures: generatePictires(),
-    description: generateDescription(),
+    offers,
+    description: description[0],
     isFavorite: Boolean(getRandomInteger(0, 1)),
     dateFrom,
     dateTo,

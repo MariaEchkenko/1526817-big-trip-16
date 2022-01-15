@@ -1,6 +1,7 @@
 import EventView from '../view/event-view.js';
 import EditPointFormView from '../view/edit-point-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {AvailableOffers} from '../mock/offer.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -31,11 +32,11 @@ export  default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new EventView(point);
-    this.#pointEditComponent = new EditPointFormView(point);
+    this.#pointEditComponent = new EditPointFormView(point, AvailableOffers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#pointEditComponent.setFormCloseHandler(this.#handleFormSubmit);
+    this.#pointEditComponent.setFormCloseHandler(this.#handleFormClose);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -62,6 +63,7 @@ export  default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -82,6 +84,7 @@ export  default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -96,6 +99,11 @@ export  default class PointPresenter {
 
   #handleFormSubmit = (point) => {
     this.#changeData(point);
+    this.#replaceFormToPoint();
+  }
+
+  #handleFormClose = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToPoint();
   }
 }
