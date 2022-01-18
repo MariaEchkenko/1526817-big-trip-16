@@ -3,18 +3,21 @@ import {humanizeTaskDate} from '../utils/point.js';
 import {destinationsData} from '../mock/point.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  type: '',
-  destination: '',
-  price: null,
+  type: 'Taxi',
+  destination: 'Amsterdam',
+  price: 0,
   offers: [],
-  description: '',
-  dateFrom: null,
-  dateTo: null
+  description: destinationsData[0],
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate()
 };
+
+let isNewPoint = false;
 
 const createEventTypeTemplate = () => (
   TYPES.map((type) => {
@@ -52,13 +55,14 @@ const createDestinationsTemplate = (type, destination) => (
 );
 
 const createPictureTemplate = (pictures) => (
-  pictures.map(({src, description}) => (
-    `<img class="event__photo" src=${src} alt="${description}">`
-  )).join('')
+  `${pictures.length ? `<div class="event__photos-tape">
+    ${pictures.map(({src, description}) => `<img class="event__photo" src=${src} alt="${description}">`).join('')}
+  </div>` : ''
+  }`
 );
 
 
-const createEditPointFormTemplate = (point, currentTypeOffers = []) => {
+const createEditPointFormTemplate = (currentTypeOffers = [], point) => {
   const {type, destination, price, offers, description, dateFrom, dateTo} = point;
 
   const typeTemplate = createEventTypeTemplate();
@@ -101,14 +105,15 @@ const createEditPointFormTemplate = (point, currentTypeOffers = []) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__reset-btn" type="reset">${isNewPoint ? 'Cancel' : 'Delete'}</button>
+        ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>`}
+
       </header>
       <section class="event__details">
         ${currentTypeOffers.length ? `<section class="event__section  event__section--offers">
@@ -119,18 +124,15 @@ const createEditPointFormTemplate = (point, currentTypeOffers = []) => {
         </div>
       </section>` : ''}
 
-        <section class="event__section  event__section--destination">
+        ${point.description ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description.description}</p>
 
-          ${description.pictures.length ? `
           <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${picturesTemplate}
-            </div>
-          </div>`: ''}
+            ${picturesTemplate}
+          </div>
 
-        </section>
+        </section>` : ''}
       </section>
     </form>
   </li>`;
@@ -142,9 +144,12 @@ export default class EditPointFormView extends SmartView {
   #avialableOffers = null;
   #currentTypeOffers = null;
 
-  constructor(point = BLANK_POINT, avialableOffers) {
+  constructor(avialableOffers, point = BLANK_POINT) {
     super();
     this._data = EditPointFormView.parcePointToData(point);
+
+    isNewPoint = point === BLANK_POINT;
+
     this.#avialableOffers = avialableOffers;
     this.#currentTypeOffers = this.#avialableOffers[this._data.type];
     this.#setInnerHandlers();
@@ -152,7 +157,7 @@ export default class EditPointFormView extends SmartView {
   }
 
   get template() {
-    return createEditPointFormTemplate(this._data, this.#currentTypeOffers);
+    return createEditPointFormTemplate(this.#currentTypeOffers, this._data);
   }
 
   removeElement = () => {
@@ -180,11 +185,17 @@ export default class EditPointFormView extends SmartView {
     this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormCloseHandler(this._callback.formClose);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   }
 
   #setDatepicker = () => {
@@ -284,9 +295,16 @@ export default class EditPointFormView extends SmartView {
     this._callback.formSubmit(EditPointFormView.parceDataToPoint(this._data));
   }
 
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPointFormView.parceDataToPoint(this._data));
+  }
+
   setFormCloseHandler = (callback) => {
     this._callback.formClose = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+    if (!isNewPoint) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+    }
   }
 
   #formCloseHandler = (evt) => {
