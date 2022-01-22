@@ -37,6 +37,8 @@ const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(headerFilters,  filterModel, pointsModel);
 
 let statisticsComponent = null;
+const tableMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.TABLE}"]`);
+const statsMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.STATS}"]`);
 
 const handleTaskNewFormClose = () => {
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
@@ -50,17 +52,22 @@ const handleSiteMenuClick = (menuItem) => {
       filterPresenter.init();
       tripPresenter.destroy();
       tripPresenter.init();
+      statsMenuElement.classList.remove('trip-tabs__btn--active');
+      tableMenuElement.classList.add('trip-tabs__btn--active');
       tripPresenter.createPoint(handleTaskNewFormClose);
-      // Убрать выделение с ADD NEW TASK после сохранения
       break;
     case MenuItem.TABLE:
       filterPresenter.init();
       tripPresenter.init();
       remove(statisticsComponent);
+      statsMenuElement.classList.remove('trip-tabs__btn--active');
+      tableMenuElement.classList.add('trip-tabs__btn--active');
       break;
     case MenuItem.STATS:
       filterPresenter.destroy();
       tripPresenter.destroy();
+      tableMenuElement.classList.remove('trip-tabs__btn--active');
+      statsMenuElement.classList.add('trip-tabs__btn--active');
       statisticsComponent = new StatisticsView(pointsModel.points);
       render(siteMain, statisticsComponent, RenderPosition.BEFOREEND);
       break;

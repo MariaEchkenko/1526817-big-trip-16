@@ -26,7 +26,7 @@ export const UpdateType = {
 };
 
 export const MenuItem = {
-  TABLE: 'TABLE',
-  STATS: 'STATS',
-  NEW_EVENT: 'NEW_EVENT',
+  TABLE: 'Table',
+  STATS: 'Stats',
+  NEW_EVENT: 'New event',
 };
