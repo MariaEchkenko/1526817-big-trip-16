@@ -1,27 +1,33 @@
-import {MENU_ITEMS} from '../const.js';
 import AbstractView from './abstract-view.js';
+import {MenuItem} from '../const.js';
 
-const activeItem = MENU_ITEMS[0];
-
-const createMenuItemTemplate = () => (
-  MENU_ITEMS.map((item) => {
-    const activeClass = item === activeItem
-      ? 'trip-tabs__btn--active'
-      : '';
-    return `<a class="trip-tabs__btn  ${activeClass}" href="#">${item}</a>`;
-  }).join('')
+const createSiteMenuTemplate = () => (
+  `<nav class="trip-controls__trip-tabs  trip-tabs">
+    <a class="trip-tabs__btn  trip-tabs__btn--active" data-menu-item="${MenuItem.TABLE}" href="#">${MenuItem.TABLE}</a>
+    <a class="trip-tabs__btn" data-menu-item="${MenuItem.STATS}" href="#">${MenuItem.STATS}</a>
+  </nav>`
 );
 
-const createSiteMenuTemplate = () => {
-  const MenuItemsTemplate = createMenuItemTemplate();
-
-  return `<nav class="trip-controls__trip-tabs  trip-tabs">
-    ${MenuItemsTemplate}
-</nav>`;
-};
-
 export default class SiteMenuView extends AbstractView {
+
   get template() {
     return createSiteMenuTemplate();
+  }
+
+  setMenuClickHandler = (callback) => {
+    this._callback.menuClick = callback;
+    this.element.addEventListener('click', this.#menuClickHandler);
+  }
+
+  setMenuItem = (menuItem) => {
+    const item = this.element.querySelector(`[data-menu-item="${menuItem}"]`);
+    if (item !== null) {
+      item.classList.add('trip-tabs__btn--active');
+    }
+  }
+
+  #menuClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.menuClick(evt.target.dataset.menuItem);
   }
 }

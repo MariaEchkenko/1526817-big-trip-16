@@ -1,6 +1,5 @@
 export const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 export const DESTINATIONS = ['Amsterdam', 'Budapest', 'Geneva', 'Berlin', 'Madrid', 'Rome'];
-export const MENU_ITEMS = ['Table', 'Stats'];
 
 export const FilterType = {
   EVERYTHING: 'everything',
@@ -24,4 +23,10 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+};
+
+export const MenuItem = {
+  TABLE: 'TABLE',
+  STATS: 'STATS',
+  NEW_EVENT: 'NEW_EVENT',
 };
