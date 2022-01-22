@@ -5,12 +5,12 @@ export const formatConversionTime = (time) => { //TODO допилить для �
   const day = Math.floor(time/1440) > 0
     ? `${Math.floor(time/1440)}D`
     : '';
+  const hours = Math.floor(time/60) % 24 > 0
+    ? `${Math.floor(time/60) % 24}H`
+    : '';
   const minutes = (time % 60) > 0
     ? time % 60
     : '00';
-  const hours = (time - minutes)/60 > 0
-    ? `${(time - minutes)/60}H`
-    : '';
   const formatTime = `${day} ${hours} ${minutes}M`;
   return formatTime;
 };

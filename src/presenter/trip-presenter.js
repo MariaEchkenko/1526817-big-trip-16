@@ -28,9 +28,6 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#newPointPresenter = new NewPointPresenter(this.#listPointsComponent, this.#handleViewAction);
-
-    this.#pointsModel.addObserver(this.#handleModeEvent);
-    this.#filterModel.addObserver(this.#handleModeEvent);
   }
 
   get points() {
@@ -51,13 +48,22 @@ export default class TripPresenter {
   }
 
   init = () => {
+    this.#pointsModel.addObserver(this.#handleModeEvent);
+    this.#filterModel.addObserver(this.#handleModeEvent);
     this.#renderTripsList();
   }
 
-  createPoint = () => {
+  destroy = () => {
+    this.#clearTripsList(true);
+    remove(this.#listPointsComponent);
+
+    this.#pointsModel.removeObserver(this.#handleModeEvent);
+    this.#filterModel.removeObserver(this.#handleModeEvent);
+  }
+
+  createPoint = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#newPointPresenter.init(callback);
   }
 
   #handleModeChange = () => {
@@ -154,6 +160,7 @@ export default class TripPresenter {
       return;
     }
 
+    this.#clearSort();
     this.#renderSort();
     this.#renderPoints(points);
   }
