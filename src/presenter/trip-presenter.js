@@ -160,6 +160,7 @@ export default class TripPresenter {
       return;
     }
 
+    this.#clearSort();
     this.#renderSort();
     this.#renderPoints(points);
   }
