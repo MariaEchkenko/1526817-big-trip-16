@@ -31,8 +31,6 @@ const headerNavigation = headerControls.querySelector('.trip-controls__navigatio
 const headerFilters = headerControls.querySelector('.trip-controls__filters');
 const siteMenuComponent = new SiteMenuView();
 
-render(headerNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
-
 const siteMain = document.querySelector('.page-main').firstElementChild;
 const mainEvents = siteMain.querySelector('.trip-events');
 
@@ -82,9 +80,10 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   handleSiteMenuClick(MenuItem.NEW_EVENT);
 });
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-
 tripPresenter.init();
 filterPresenter.init();
 
-pointsModel.init();
+pointsModel.init().finally(() => {
+  render(headerNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+});
