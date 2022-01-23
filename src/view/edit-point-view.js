@@ -70,7 +70,7 @@ const createEditPointFormTemplate = (currentTypeOffers = [], point) => {
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(currentTypeOffers, offers, type.toLowerCase());
   const destinationsTemplate = createDestinationsTemplate(type, destination);
-  const picturesTemplate = createPictureTemplate(description.pictures);
+  const picturesTemplate = createPictureTemplate(destination.pictures);
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">

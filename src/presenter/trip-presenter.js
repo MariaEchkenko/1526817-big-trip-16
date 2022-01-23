@@ -1,9 +1,10 @@
 import ListPointsView from '../view/list-points-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
-import {remove, render, RenderPosition} from '../utils/render.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
+import LoadingView from '../view/loading-view.js';
+import {remove, render, RenderPosition} from '../utils/render.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {sortTime, sortPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
@@ -18,10 +19,12 @@ export default class TripPresenter {
   #filterType = FilterType.EVERYTHING;
 
   #listPointsComponent = new ListPointsView();
+  #loadingComponent = new LoadingView();
   #noPointComponent = null;
 
   #pointPresenter = new Map();
   #newPointPresenter = null;
+  #isLoading = true;
 
   constructor(listContainer, pointsModel, filterModel) {
     this.#listContainer = listContainer;
@@ -98,6 +101,11 @@ export default class TripPresenter {
         this.#clearTripsList();
         this.#renderTripsList({resetSortType: true});
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderTripsList();
+        break;
     }
   }
 
@@ -133,6 +141,10 @@ export default class TripPresenter {
     points.forEach((point) => this.#renderPoint(point));
   }
 
+  #renderLoading = () => {
+    render(this.#listContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoPoints = () => {
     this.#noPointComponent = new NoPointView(this.#filterType);
     render(this.#listContainer, this.#noPointComponent, RenderPosition.BEFOREEND);
@@ -144,6 +156,7 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     this.#clearSort();
+    remove(this.#loadingComponent);
     remove(this.#noPointComponent);
 
     if (resetSortType) {
@@ -152,6 +165,11 @@ export default class TripPresenter {
   }
 
   #renderTripsList = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const points = this.points;
     const pointCount = points.length;
 

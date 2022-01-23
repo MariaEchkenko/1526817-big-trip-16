@@ -1,4 +1,5 @@
 import AbstractObservable from '../utils/abstract-observable.js';
+import {UpdateType} from '../const.js';
 
 export default class PointsModel extends AbstractObservable {
   #apiService = null;
@@ -7,19 +8,21 @@ export default class PointsModel extends AbstractObservable {
   constructor(apiService) {
     super();
     this.#apiService = apiService;
-
-    this.#apiService.points.then((points) => {
-      console.log(points);
-      console.log(points.map(this.#adaptToClient));
-    });
-  }
-
-  set points(points) {
-    this.#points = [...points];
   }
 
   get points() {
     return this.#points;
+  }
+
+  init = async () => {
+    try {
+      const points = await this.#apiService.points;
+      this.#points = points.map(this.#adaptToClient);
+    } catch (err) {
+      this.#points = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updatePoint = (updateType, update) => {

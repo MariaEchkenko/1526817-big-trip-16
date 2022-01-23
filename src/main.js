@@ -2,8 +2,8 @@ import TripInfoView from './view/trip-info-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import StatisticsView from './view/statistics-view.js';
 import {render, RenderPosition, remove} from './utils/render.js';
-import {sortDefault} from './utils/point.js';
-import {generatePoint} from './mock/point.js';
+//import {sortDefault} from './utils/point.js';
+//import {generatePoint} from './mock/point.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
@@ -11,14 +11,14 @@ import FilterModel from './model/filter-model.js';
 import {MenuItem} from './const.js';
 import ApiService from './api-service.js';
 
-const EVENT_COUNT = 20;
+//const EVENT_COUNT = 20;
 const AUTHORIZATION = 'Basic kkjhgg32rmjnj3';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
-const points = Array.from({length: EVENT_COUNT}, generatePoint).sort(sortDefault);
+//const points = Array.from({length: EVENT_COUNT}, generatePoint).sort(sortDefault);
 
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
-pointsModel.points = points;
+//pointsModel.points = points;
 
 const filterModel = new FilterModel();
 
@@ -77,12 +77,14 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  handleSiteMenuClick(MenuItem.NEW_EVENT);
+});
+
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 tripPresenter.init();
 filterPresenter.init();
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-  evt.preventDefault();
-  handleSiteMenuClick(MenuItem.NEW_EVENT);
-});
+pointsModel.init();
