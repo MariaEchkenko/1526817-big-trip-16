@@ -1,7 +1,18 @@
 import AbstractObservable from '../utils/abstract-observable.js';
 
 export default class PointsModel extends AbstractObservable {
+  #apiService = null;
   #points = [];
+
+  constructor(apiService) {
+    super();
+    this.#apiService = apiService;
+
+    this.#apiService.points.then((points) => {
+      console.log(points);
+      console.log(points.map(this.#adaptToClient));
+    });
+  }
 
   set points(points) {
     this.#points = [...points];
@@ -49,5 +60,21 @@ export default class PointsModel extends AbstractObservable {
     ];
 
     this._notify(updateType);
+  }
+
+  #adaptToClient = (point) => {
+    const adaptedPoint = {...point,
+      price: point['base_price'],
+      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
+      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      isFavorite: point['is_favorite'],
+    };
+
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
   }
 }

@@ -9,12 +9,15 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import {MenuItem} from './const.js';
+import ApiService from './api-service.js';
 
 const EVENT_COUNT = 20;
+const AUTHORIZATION = 'Basic kkjhgg32rmjnj3';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
 const points = Array.from({length: EVENT_COUNT}, generatePoint).sort(sortDefault);
 
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 pointsModel.points = points;
 
 const filterModel = new FilterModel();
