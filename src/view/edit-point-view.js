@@ -1,6 +1,5 @@
-import {TYPES, DESTINATIONS} from '../const.js';
+import {TYPES} from '../const.js';
 import {humanizeTaskDate} from '../utils/point.js';
-import {destinationsData} from '../mock/point.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
@@ -9,10 +8,9 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   type: 'Taxi',
-  destination: 'Amsterdam',
+  destination: {},
   price: 0,
   offers: [],
-  description: destinationsData[0],
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate()
 };
@@ -43,18 +41,18 @@ const createOffersTemplate = (availableOffers, pointOffers, type) => (
   )).join('')
 );
 
-const createDestinationsTemplate = (type, destination) => (
+const createDestinationsTemplate = (allDestinations, type, destination) => (
   `<div class="event__field-group  event__field-group--destination">
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
     <select class="event__input  event__input--destination" id="destination-list-1" name="event-destination">
-      ${DESTINATIONS.map((currentDestination) => `<option value="${currentDestination}" ${currentDestination === destination ? 'selected' : ''}>${currentDestination}</option>`).join('')}
+      ${allDestinations.map(({name}) => `<option value="${name}" ${name === destination.name ? 'selected' : ''}>${name}</option>`).join('')}
     </select>
   </div>`
 );
 
-const createPictureTemplate = (pictures) => (
+const createPictureTemplate = (pictures = []) => (
   `${pictures.length ? `<div class="event__photos-tape">
     ${pictures.map(({src, description}) => `<img class="event__photo" src=${src} alt="${description}">`).join('')}
   </div>` : ''
@@ -62,14 +60,14 @@ const createPictureTemplate = (pictures) => (
 );
 
 
-const createEditPointFormTemplate = (currentTypeOffers = [], point) => {
-  const {type, destination, price, offers, description, dateFrom, dateTo} = point;
+const createEditPointFormTemplate = (allDestinations = [], currentTypeOffers = [], point) => {
+  const {type, destination, price, offers, dateFrom, dateTo} = point;
 
   const typeTemplate = createEventTypeTemplate();
   const startTime = humanizeTaskDate(dateFrom, 'DD/MM/YY HH:mm');
   const endTime = humanizeTaskDate(dateTo, 'DD/MM/YY HH:mm');
   const offersTemplate = createOffersTemplate(currentTypeOffers, offers, type.toLowerCase());
-  const destinationsTemplate = createDestinationsTemplate(type, destination);
+  const destinationsTemplate = createDestinationsTemplate(allDestinations, type, destination);
   const picturesTemplate = createPictureTemplate(destination.pictures);
 
   return `<li class="trip-events__item">
@@ -124,9 +122,9 @@ const createEditPointFormTemplate = (currentTypeOffers = [], point) => {
         </div>
       </section>` : ''}
 
-        ${point.description ? `<section class="event__section  event__section--destination">
+        ${destination ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description.description}</p>
+          <p class="event__destination-description">${destination.description}</p>
 
           <div class="event__photos-container">
             ${picturesTemplate}
@@ -142,22 +140,25 @@ export default class EditPointFormView extends SmartView {
   #datepickerFrom = null;
   #datepickerTo = null;
   #avialableOffers = null;
+  #destinations = null;
   #currentTypeOffers = null;
 
-  constructor(avialableOffers, point = BLANK_POINT) {
+  constructor(destinations, avialableOffers, point = BLANK_POINT) {
     super();
     this._data = EditPointFormView.parcePointToData(point);
 
     isNewPoint = point === BLANK_POINT;
 
     this.#avialableOffers = avialableOffers;
-    this.#currentTypeOffers = this.#avialableOffers[this._data.type];
+    this.#currentTypeOffers = avialableOffers.filter((offer) => offer.type === this._data.type)[0].offers;
+    this.#destinations = destinations;
+
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
 
   get template() {
-    return createEditPointFormTemplate(this.#currentTypeOffers, this._data);
+    return createEditPointFormTemplate(this.#destinations, this.#currentTypeOffers, this._data);
   }
 
   removeElement = () => {
@@ -249,14 +250,7 @@ export default class EditPointFormView extends SmartView {
   #typeInputHandler = (evt) => {
     evt.preventDefault();
 
-    const ucFirstType = (type) => {
-      if (!type) {
-        return type;
-      }
-      return type[0].toUpperCase() + type.slice(1);
-    };
-    this.#currentTypeOffers = this.#avialableOffers[ucFirstType(evt.target.value)];
-
+    this.#currentTypeOffers = this.#avialableOffers.filter((offer) => offer.type === this._data.type)[0].offers;
     this.updateData({
       type: evt.target.value,
       offers: []
@@ -265,11 +259,9 @@ export default class EditPointFormView extends SmartView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
-    const currentDescription = destinationsData.filter(({name}) => name === evt.target.value);
-
+    const currentDestination = this.#destinations.filter(({name}) => name === evt.target.value)[0];
     this.updateData({
-      destination: evt.target.value,
-      description: currentDescription[0]
+      destination: currentDestination,
     });
   }
 

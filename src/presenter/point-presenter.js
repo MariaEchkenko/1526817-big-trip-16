@@ -1,7 +1,6 @@
 import EventView from '../view/event-view.js';
 import EditPointFormView from '../view/edit-point-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
-import {availableOffers} from '../mock/offer.js';
 import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
@@ -18,12 +17,16 @@ export  default class PointPresenter {
   #pointEditComponent = null;
 
   #point = null;
+  #availableOffers = [];
+  #destinations = [];
   #mode = Mode.DEFAULT
 
-  constructor(listPointsContainer, changeData, changeMode) {
+  constructor(availableOffers, destinations, listPointsContainer, changeData, changeMode) {
     this.#listPointsContainer = listPointsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#availableOffers = availableOffers;
+    this.#destinations = destinations;
   }
 
   init = (point) => {
@@ -33,7 +36,7 @@ export  default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new EventView(point);
-    this.#pointEditComponent = new EditPointFormView(availableOffers, point);
+    this.#pointEditComponent = new EditPointFormView(this.#destinations, this.#availableOffers, point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
