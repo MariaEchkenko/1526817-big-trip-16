@@ -27,15 +27,19 @@ const createEventTypeTemplate = () => (
   }).join('')
 );
 
-const isOfferChecked = (offer, pointOffers) => (pointOffers.includes(offer));
+const isOfferChecked = (offer, pointOffers) => {
+  const checkedOffers = pointOffers.filter((pointOffer) => offer.id === pointOffer.id).length;
+  return checkedOffers;
+};
+
 const createOffersTemplate = (availableOffers, pointOffers, type) => (
   availableOffers.map((offer) => (
     `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" data-id ="${offer.id}" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${isOfferChecked(offer, pointOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`
   )).join('')
