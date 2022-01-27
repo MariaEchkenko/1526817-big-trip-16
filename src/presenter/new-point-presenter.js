@@ -8,15 +8,11 @@ export  default class NewPointPresenter {
   #changeData = null;
   #pointEditComponent = null;
   #destroyCallback = null;
-  //#availableOffers = [];
-  //#destinations = [];
   #pointModel = null;
 
   constructor(pointModel, listPointsContainer, changeData) {
     this.#listPointsContainer = listPointsContainer;
     this.#changeData = changeData;
-    //this.#availableOffers = availableOffers;
-    //this.#destinations = destinations;
     this.#pointModel = pointModel;
   }
 
@@ -50,6 +46,25 @@ export  default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving = () => {
+    this.#pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -63,7 +78,6 @@ export  default class NewPointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.destroy();
   }
 
   #handleDeleteClick = () => {
