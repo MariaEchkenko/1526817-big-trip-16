@@ -30,7 +30,7 @@ export default class TripPresenter {
     this.#listContainer = listContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-    this.#newPointPresenter = new NewPointPresenter(this.#listPointsComponent, this.#handleViewAction);
+    this.#newPointPresenter = new NewPointPresenter(this.#pointsModel, this.#listPointsComponent, this.#handleViewAction);
   }
 
   get points() {

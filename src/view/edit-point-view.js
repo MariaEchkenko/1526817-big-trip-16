@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  type: 'Taxi',
+  type: 'taxi',
   destination: {},
   price: 0,
   offers: [],
@@ -154,7 +154,7 @@ export default class EditPointFormView extends SmartView {
     isNewPoint = point === BLANK_POINT;
 
     this.#avialableOffers = avialableOffers;
-    this.#currentTypeOffers = avialableOffers.filter((offer) => offer.type === this._data.type)[0].offers;
+    this.#currentTypeOffers = avialableOffers.filter((offer) => offer.type === this._data.type.toLowerCase())[0].offers;
     this.#destinations = destinations;
 
     this.#setInnerHandlers();

@@ -2,8 +2,6 @@ import TripInfoView from './view/trip-info-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import StatisticsView from './view/statistics-view.js';
 import {render, RenderPosition, remove} from './utils/render.js';
-//import {sortDefault} from './utils/point.js';
-//import {generatePoint} from './mock/point.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
@@ -38,14 +36,15 @@ const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(headerFilters,  filterModel, pointsModel);
 
 let statisticsComponent = null;
-const tableMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.TABLE}"]`);
-const statsMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.STATS}"]`);
 
 const handleTaskNewFormClose = () => {
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
 };
 
 const handleSiteMenuClick = (menuItem) => {
+  const tableMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.TABLE}"]`);
+  const statsMenuElement = headerNavigation.querySelector(`[data-menu-item="${MenuItem.STATS}"]`);
+
   switch (menuItem) {
     case MenuItem.NEW_EVENT:
       remove(statisticsComponent);
