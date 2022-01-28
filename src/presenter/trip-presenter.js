@@ -6,7 +6,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
-import {sortTime, sortPrice} from '../utils/point.js';
+import {sortDefault, sortTime, sortPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
 
 export default class TripPresenter {
@@ -39,6 +39,9 @@ export default class TripPresenter {
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
+      case SortType.DEFAULT:{
+        return filteredPoints.sort(sortDefault);
+      }
       case SortType.TIME:{
         return filteredPoints.sort(sortTime);
       }
