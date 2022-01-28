@@ -161,6 +161,7 @@ export default class EditPointFormView extends SmartView {
     this.#avialableOffers = avialableOffers;
     this.#currentTypeOffers = avialableOffers.filter((offer) => offer.type === this._data.type.toLowerCase())[0].offers;
     this.#destinations = destinations;
+    BLANK_POINT.destination = this.#destinations[0];
 
     this.#setInnerHandlers();
     this.#setDatepicker();
