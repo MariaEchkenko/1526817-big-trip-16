@@ -29,12 +29,15 @@ const siteMenuComponent = new SiteMenuView();
 const siteMain = document.querySelector('.page-main').firstElementChild;
 const mainEvents = siteMain.querySelector('.trip-events');
 
+const newEventButton = document.querySelector('.trip-main__event-add-btn');
+
 const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(headerFilters,  filterModel, pointsModel);
 
 let statisticsComponent = null;
 
 const handleTaskNewFormClose = () => {
+  newEventButton.disabled = false;
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
 };
 
@@ -52,6 +55,7 @@ const handleSiteMenuClick = (menuItem) => {
       statsMenuElement.classList.remove('trip-tabs__btn--active');
       tableMenuElement.classList.add('trip-tabs__btn--active');
       tripPresenter.createPoint(handleTaskNewFormClose);
+      newEventButton.disabled = true;
       break;
     case MenuItem.TABLE:
       filterPresenter.init();
@@ -71,7 +75,7 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+newEventButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   handleSiteMenuClick(MenuItem.NEW_EVENT);
 });
