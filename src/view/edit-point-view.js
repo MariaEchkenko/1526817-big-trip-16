@@ -12,7 +12,8 @@ const BLANK_POINT = {
   price: 0,
   offers: [],
   dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate()
+  dateTo: dayjs().toDate(),
+  isFavorite: false,
 };
 
 let isNewPoint = false;
