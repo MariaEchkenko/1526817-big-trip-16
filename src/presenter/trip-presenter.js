@@ -66,6 +66,7 @@ export default class TripPresenter {
   init = () => {
     this.#pointsModel.addObserver(this.#handleModeEvent);
     this.#filterModel.addObserver(this.#handleModeEvent);
+    this.#currentSortType = SortType.DEFAULT;
     this.#renderTripsList();
   }
 
@@ -78,7 +79,6 @@ export default class TripPresenter {
   }
 
   createPoint = (callback) => {
-    this.#currentSortType = SortType.DEFAULT;
     this.#newPointPresenter.init(callback);
   }
 
