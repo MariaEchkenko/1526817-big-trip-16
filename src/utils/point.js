@@ -1,15 +1,17 @@
 import dayjs from 'dayjs';
 
+const addZero = (number) => number < 10 ? `0${number}` : number;
+
 // Функция преобразования времени в формат 0D 0HH 0MM, time приходит в минутах
-export const formatConversionTime = (time) => { //TODO допилить для случая, когда дни > 0, а минуты = 0
+export const formatConversionTime = (time) => {
   const day = Math.floor(time/1440) > 0
-    ? `${Math.floor(time/1440)}D`
+    ? `${addZero(Math.floor(time/1440))}D`
     : '';
   const hours = Math.floor(time/60) % 24 > 0
-    ? `${Math.floor(time/60) % 24}H`
+    ? `${addZero(Math.floor(time/60) % 24)}H`
     : '';
   const minutes = (time % 60) > 0
-    ? time % 60
+    ? addZero(time % 60)
     : '00';
   const formatTime = `${day} ${hours} ${minutes}M`;
   return formatTime;
