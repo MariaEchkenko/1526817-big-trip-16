@@ -1,12 +1,17 @@
 import EventView from '../view/event-view.js';
 import EditPointFormView from '../view/edit-point-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
-import {availableOffers} from '../mock/offer.js';
 import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export  default class PointPresenter {
@@ -18,12 +23,16 @@ export  default class PointPresenter {
   #pointEditComponent = null;
 
   #point = null;
+  #availableOffers = [];
+  #destinations = [];
   #mode = Mode.DEFAULT
 
-  constructor(listPointsContainer, changeData, changeMode) {
+  constructor(availableOffers, destinations, listPointsContainer, changeData, changeMode) {
     this.#listPointsContainer = listPointsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#availableOffers = availableOffers;
+    this.#destinations = destinations;
   }
 
   init = (point) => {
@@ -33,7 +42,7 @@ export  default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new EventView(point);
-    this.#pointEditComponent = new EditPointFormView(availableOffers, point);
+    this.#pointEditComponent = new EditPointFormView(this.#destinations, this.#availableOffers, point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
@@ -52,6 +61,7 @@ export  default class PointPresenter {
 
     if (this.#mode === Mode.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -67,6 +77,39 @@ export  default class PointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
+    }
+  }
+
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this.#pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this.#pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this.#pointComponent.shake(resetFormState);
+        this.#pointEditComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -109,7 +152,6 @@ export  default class PointPresenter {
       UpdateType.MINOR,
       point
     );
-    this.#replaceFormToPoint();
   }
 
   #handleFormClose = () => {

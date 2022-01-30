@@ -1,19 +1,19 @@
 
 import EditPointFormView from '../view/edit-point-view.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
-import {availableOffers} from '../mock/offer.js';
 import {UserAction, UpdateType} from '../const.js';
-import {nanoid} from 'nanoid';
 
 export  default class NewPointPresenter {
   #listPointsContainer = null;
   #changeData = null;
   #pointEditComponent = null;
   #destroyCallback = null;
+  #pointModel = null;
 
-  constructor(listPointsContainer, changeData) {
+  constructor(pointModel, listPointsContainer, changeData) {
     this.#listPointsContainer = listPointsContainer;
     this.#changeData = changeData;
+    this.#pointModel = pointModel;
   }
 
   init = (callback) => {
@@ -23,7 +23,7 @@ export  default class NewPointPresenter {
       return;
     }
 
-    this.#pointEditComponent = new EditPointFormView(availableOffers);
+    this.#pointEditComponent = new EditPointFormView(this.#pointModel.destinations, this.#pointModel.availableOffers);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
@@ -46,6 +46,25 @@ export  default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving = () => {
+    this.#pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -57,9 +76,8 @@ export  default class NewPointPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
-    this.destroy();
   }
 
   #handleDeleteClick = () => {
