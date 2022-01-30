@@ -80,10 +80,11 @@ newEventButton.addEventListener('click', (evt) => {
 });
 
 tripPresenter.init();
-filterPresenter.init();
+//filterPresenter.init();
 
 pointsModel.init().finally(() => {
   render(headerNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   tripInfoPresenter.init();
+  filterPresenter.init();
 });
