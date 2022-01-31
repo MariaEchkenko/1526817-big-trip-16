@@ -12,28 +12,24 @@ import ApiService from './api-service.js';
 const AUTHORIZATION = 'Basic kkjhgg32rmjnj3';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
-
-const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
-
-const filterModel = new FilterModel();
-
 const tripMain = document.querySelector('.trip-main');
-const tripInfoPresenter = new TripInfoPresenter(tripMain, pointsModel);
-
 const headerControls = tripMain.querySelector('.trip-controls');
 const headerNavigation = headerControls.querySelector('.trip-controls__navigation');
 const headerFilters = headerControls.querySelector('.trip-controls__filters');
-const siteMenuComponent = new SiteMenuView();
-
 const siteMain = document.querySelector('.page-main').firstElementChild;
 const mainEvents = siteMain.querySelector('.trip-events');
-
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
+
+let statisticsComponent = null;
+
+const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
+const filterModel = new FilterModel();
+
+const tripInfoPresenter = new TripInfoPresenter(tripMain, pointsModel);
+const siteMenuComponent = new SiteMenuView();
 
 const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel, tripInfoPresenter);
 const filterPresenter = new FilterPresenter(headerFilters,  filterModel, pointsModel);
-
-let statisticsComponent = null;
 
 const handleTaskNewFormClose = () => {
   newEventButton.disabled = false;
@@ -80,7 +76,6 @@ newEventButton.addEventListener('click', (evt) => {
 });
 
 tripPresenter.init();
-//filterPresenter.init();
 
 pointsModel.init().finally(() => {
   render(headerNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
