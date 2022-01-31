@@ -1,9 +1,9 @@
-import TripInfoView from './view/trip-info-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import StatisticsView from './view/statistics-view.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import {MenuItem} from './const.js';
@@ -18,8 +18,7 @@ const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
 const tripMain = document.querySelector('.trip-main');
-
-render(tripMain, new TripInfoView(), RenderPosition.AFTERBEGIN);
+const tripInfoPresenter = new TripInfoPresenter(tripMain, pointsModel);
 
 const headerControls = tripMain.querySelector('.trip-controls');
 const headerNavigation = headerControls.querySelector('.trip-controls__navigation');
@@ -31,7 +30,7 @@ const mainEvents = siteMain.querySelector('.trip-events');
 
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
-const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(mainEvents, pointsModel, filterModel, tripInfoPresenter);
 const filterPresenter = new FilterPresenter(headerFilters,  filterModel, pointsModel);
 
 let statisticsComponent = null;
@@ -81,9 +80,11 @@ newEventButton.addEventListener('click', (evt) => {
 });
 
 tripPresenter.init();
-filterPresenter.init();
+//filterPresenter.init();
 
 pointsModel.init().finally(() => {
   render(headerNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  tripInfoPresenter.init();
+  filterPresenter.init();
 });

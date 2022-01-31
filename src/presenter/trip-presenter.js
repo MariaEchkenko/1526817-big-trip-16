@@ -24,12 +24,14 @@ export default class TripPresenter {
 
   #pointPresenter = new Map();
   #newPointPresenter = null;
+  #tripInfoPresenter = null;
   #isLoading = true;
 
-  constructor(listContainer, pointsModel, filterModel) {
+  constructor(listContainer, pointsModel, filterModel, tripInfoPresenter) {
     this.#listContainer = listContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#tripInfoPresenter = tripInfoPresenter;
     this.#newPointPresenter = new NewPointPresenter(this.#pointsModel, this.#listPointsComponent, this.#handleViewAction);
   }
 
@@ -124,6 +126,8 @@ export default class TripPresenter {
       case UpdateType.MINOR:
         this.#clearTripsList();
         this.#renderTripsList();
+        this.#tripInfoPresenter.destroy();
+        this.#tripInfoPresenter.init();
         break;
       case UpdateType.MAJOR:
         this.#clearTripsList();
