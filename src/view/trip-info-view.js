@@ -1,6 +1,8 @@
 import AbstractView from './abstract-view.js';
 import {humanizeTaskDate} from '../utils/point.js';
 
+const MAX_DESTINATION_NAMES = 3;
+
 const getTotalPrice = (points) =>
   points.reduce((totalPrice, point) =>
     totalPrice + point.price + point.offers.reduce((totalOffersPrice, {price}) =>
@@ -14,22 +16,13 @@ const getTripDuration = (points) => {
 };
 
 const getTripName = (points) => {
-  const startCity = points[0].destination.name;
-  const secondCity = points[1].destination.name;
-  const endCity = points[points.length - 1].destination.name;
-
-  switch (points.length) {
-    case 1:
-      return startCity;
-    case 2:
-      return `${startCity} &mdash; ${endCity}`;
-    case 3:
-      return `${startCity} &mdash; ${secondCity} &mdash; ${endCity}`;
-    default:
-      return `${startCity} &mdash; ... &mdash; ${endCity}`;
-  }
+  const destinationNames = [];
+  points.forEach((point) => destinationNames.push(point.destination.name));
+  const route =destinationNames.length > MAX_DESTINATION_NAMES ?
+    `${destinationNames[0]} - ... - ${destinationNames[destinationNames.length - 1]}`
+    : destinationNames.join(' - ');
+  return route;
 };
-
 
 const createTripInfoTemplate = (points) => (
   `<section class="trip-main__trip-info  trip-info">

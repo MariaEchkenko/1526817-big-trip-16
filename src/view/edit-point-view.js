@@ -145,21 +145,21 @@ const createEditPointFormTemplate = (allDestinations = [], currentTypeOffers = [
   </li>`;
 };
 
-export default class EditPointFormView extends SmartView {
+export default class EditPointView extends SmartView {
   #datepickerFrom = null;
   #datepickerTo = null;
-  #avialableOffers = null;
+  #availableOffers = null;
   #destinations = null;
   #currentTypeOffers = null;
 
-  constructor(destinations, avialableOffers, point = BLANK_POINT) {
+  constructor(destinations, availableOffers, point = BLANK_POINT) {
     super();
-    this._data = EditPointFormView.parcePointToData(point);
+    this._data = EditPointView.parcePointToData(point);
 
     isNewPoint = point === BLANK_POINT;
 
-    this.#avialableOffers = avialableOffers;
-    this.#currentTypeOffers = avialableOffers.filter((offer) => offer.type === this._data.type.toLowerCase())[0].offers;
+    this.#availableOffers = availableOffers;
+    this.#currentTypeOffers = availableOffers.filter((offer) => offer.type === this._data.type.toLowerCase())[0].offers;
     this.#destinations = destinations;
     BLANK_POINT.destination = this.#destinations[0];
 
@@ -187,7 +187,7 @@ export default class EditPointFormView extends SmartView {
 
   reset = (point) => {
     this.updateData(
-      EditPointFormView.parcePointToData(point)
+      EditPointView.parcePointToData(point)
     );
   }
 
@@ -260,7 +260,7 @@ export default class EditPointFormView extends SmartView {
   #typeInputHandler = (evt) => {
     evt.preventDefault();
 
-    this.#currentTypeOffers = this.#avialableOffers.filter((offer) => offer.type === this._data.type)[0].offers;
+    this.#currentTypeOffers = this.#availableOffers.filter((offer) => offer.type === this._data.type)[0].offers;
     this.updateData({
       type: evt.target.value,
       offers: []
@@ -294,12 +294,12 @@ export default class EditPointFormView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EditPointFormView.parceDataToPoint(this._data));
+    this._callback.formSubmit(EditPointView.parceDataToPoint(this._data));
   }
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(EditPointFormView.parceDataToPoint(this._data));
+    this._callback.deleteClick(EditPointView.parceDataToPoint(this._data));
   }
 
   setFormCloseHandler = (callback) => {

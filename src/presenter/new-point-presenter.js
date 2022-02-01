@@ -1,5 +1,5 @@
-
-import EditPointFormView from '../view/edit-point-view.js';
+import {isEscKey} from '../utils/common.js';
+import EditPointView from '../view/edit-point-view.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
@@ -23,7 +23,7 @@ export  default class NewPointPresenter {
       return;
     }
 
-    this.#pointEditComponent = new EditPointFormView(this.#pointModel.destinations, this.#pointModel.availableOffers);
+    this.#pointEditComponent = new EditPointView(this.#pointModel.destinations, this.#pointModel.availableOffers);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
@@ -66,7 +66,7 @@ export  default class NewPointPresenter {
   }
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (isEscKey(evt.key)) {
       evt.preventDefault();
       this.destroy();
     }
